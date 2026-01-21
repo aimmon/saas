@@ -4,7 +4,7 @@ import type { z } from "zod"
 
 type ConfigType = "string" | "number" | "boolean" | "select" | "textarea"
 
-type SelectOption = { value: string; labelKey: string }
+type SelectOption = { value: string; labelKey?: string }
 
 // 基础配置定义
 type BaseConfigDef = {

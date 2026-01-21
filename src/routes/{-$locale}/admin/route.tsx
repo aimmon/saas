@@ -5,6 +5,7 @@ import { adminMiddleware, authMiddleware } from "@/shared/middleware/auth"
 
 export const Route = createFileRoute("/{-$locale}/admin")({
   component: RouteComponent,
+  ssr: false,
   server: {
     middleware: [authMiddleware, adminMiddleware],
   },
@@ -14,7 +15,10 @@ function RouteComponent() {
   return (
     <SidebarProvider>
       <AdminSidebar />
-      <main className="flex min-h-dvh flex-1 flex-col">
+      <main
+        className="flex min-h-dvh flex-1 flex-col"
+        style={{ fontFamily: "Inter Variable" }}
+      >
         <SidebarTrigger />
         <Outlet />
       </main>

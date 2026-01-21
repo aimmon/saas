@@ -1,6 +1,7 @@
 import { useRouterState } from "@tanstack/react-router"
 import { Cog, Users } from "lucide-react"
 import { useIntlayer } from "react-intlayer"
+import logo from "@/logo.svg"
 import { LocalizedLink, type To } from "@/shared/components/locale/localized-link"
 import {
   Sidebar,
@@ -39,12 +40,19 @@ export default function AdminSidebar() {
       <SidebarHeader className="border-b">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
+            <SidebarMenuButton
+              size="lg"
+              asChild
+            >
               <LocalizedLink to="/">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <Cog className="size-4" />
+                <div className="flex items-center justify-center w-7 h-7 p-0.5 bg-black/90 rounded-md">
+                  <img
+                    src={logo}
+                    alt="Logo"
+                    className="size-8 invert dark:invert-0"
+                  />
                 </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
+                <div className="grid flex-1 text-left text-sm leading-tight group-data-[state=collapsed]:hidden">
                   <span className="truncate font-semibold">{content.title}</span>
                 </div>
               </LocalizedLink>
@@ -61,7 +69,11 @@ export default function AdminSidebar() {
                 const isActive = currentPath.includes(item.match)
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={isActive} tooltip={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive}
+                      tooltip={item.title}
+                    >
                       <LocalizedLink to={item.url}>
                         <item.icon />
                         <span>{item.title}</span>

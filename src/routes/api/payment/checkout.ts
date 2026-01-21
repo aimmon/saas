@@ -32,7 +32,7 @@ export const Route = createFileRoute("/api/payment/checkout")({
           }
           logger.info("Extracted params:", { planId, priceId, successUrl, cancelUrl, metadata })
 
-          const paymentService = new PaymentService()
+          const paymentService = await PaymentService.create()
           const result = await paymentService.createCheckout({
             planId,
             priceId,

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
-import { Lock } from "lucide-react"
+import { Eye, EyeOff, Lock } from "lucide-react"
 import { useState } from "react"
 import { useIntlayer } from "react-intlayer"
 import { toast } from "sonner"
@@ -25,6 +25,7 @@ import {
 import { Skeleton } from "@/shared/components/ui/skeleton"
 import { Switch } from "@/shared/components/ui/switch"
 import { Textarea } from "@/shared/components/ui/textarea"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/components/ui/tooltip"
 import type { ConfigGroup, ConfigMeta, SelectOption } from "@/shared/lib/config/helper"
 
 export const Route = createFileRoute("/{-$locale}/admin/config")({
@@ -36,6 +37,18 @@ function ConfigPage() {
   const configI18n = useIntlayer("admin-config")
   const content = useIntlayer("admin")
   const [pendingChanges, setPendingChanges] = useState<Record<string, unknown>>({})
+  const [showValues, setShowValues] = useState(() => {
+    const saved = localStorage.getItem("admin-config-show-values")
+    return saved === null ? true : saved === "true"
+  })
+
+  const toggleShowValues = () => {
+    setShowValues((prev) => {
+      const next = !prev
+      localStorage.setItem("admin-config-show-values", String(next))
+      return next
+    })
+  }
 
   const { data: configs, isLoading } = useQuery({
     queryKey: ["admin", "configs"],
@@ -122,10 +135,26 @@ function ConfigPage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
-      <div>
-        <h1 className="text-2xl font-semibold">{content.config.title}</h1>
-        <p className="text-muted-foreground text-sm">{content.config.description}</p>
+    <div className="flex-1 space-y-6 p-4 sm:p-6">
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">{content.config.title}</h1>
+          <p className="text-muted-foreground text-sm">{content.config.description}</p>
+        </div>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleShowValues}
+            >
+              {showValues ? <Eye className="size-5" /> : <EyeOff className="size-5" />}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            {showValues ? content.config.hideValues.value : content.config.showValues.value}
+          </TooltipContent>
+        </Tooltip>
       </div>
 
       <div className="grid gap-6">
@@ -143,6 +172,7 @@ function ConfigPage() {
               items={items}
               hasChanges={hasChanges}
               isSaving={mutation.isPending}
+              showValues={showValues}
               configI18n={configI18n}
               content={content}
               getConfigValue={getConfigValue}
@@ -162,6 +192,7 @@ type ConfigGroupCardProps = {
   items: ConfigMeta[]
   hasChanges: boolean
   isSaving: boolean
+  showValues: boolean
   configI18n: ReturnType<typeof useIntlayer<"admin-config">>
   content: ReturnType<typeof useIntlayer<"admin">>
   getConfigValue: (config: ConfigMeta) => unknown
@@ -175,6 +206,7 @@ function ConfigGroupCard({
   items,
   hasChanges,
   isSaving,
+  showValues,
   configI18n,
   content,
   getConfigValue,
@@ -187,7 +219,7 @@ function ConfigGroupCard({
   return (
     <Card className="shadow-none">
       <CardHeader>
-        <div className="flex items-start justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-1">
             <CardTitle>{groupI18n?.title?.value ?? group.labelKey}</CardTitle>
             <CardDescription>{groupI18n?.description?.value}</CardDescription>
@@ -219,6 +251,7 @@ function ConfigGroupCard({
             key={config.key}
             config={config}
             value={getConfigValue(config)}
+            showValues={showValues}
             configI18n={configI18n}
             content={content}
             onChange={(value) => onChange(config.key, value)}
@@ -232,12 +265,20 @@ function ConfigGroupCard({
 type ConfigFieldProps = {
   config: ConfigMeta
   value: unknown
+  showValues: boolean
   configI18n: ReturnType<typeof useIntlayer<"admin-config">>
   content: ReturnType<typeof useIntlayer<"admin">>
   onChange: (value: unknown) => void
 }
 
-function ConfigField({ config, value, configI18n, content, onChange }: ConfigFieldProps) {
+function ConfigField({
+  config,
+  value,
+  showValues,
+  configI18n,
+  content,
+  onChange,
+}: ConfigFieldProps) {
   const i18n = configI18n[config.labelKey as keyof typeof configI18n] as
     | { label?: { value: string }; description?: { value: string } }
     | undefined
@@ -245,8 +286,8 @@ function ConfigField({ config, value, configI18n, content, onChange }: ConfigFie
   const isLocked = config.isLocked
 
   return (
-    <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
-      <div className="flex-1 space-y-1">
+    <div className="flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+      <div className="space-y-1">
         <div className="flex items-center gap-2">
           <Label
             htmlFor={config.key}
@@ -288,7 +329,7 @@ function ConfigField({ config, value, configI18n, content, onChange }: ConfigFie
             value={value as string}
             onChange={(e) => onChange(e.target.value)}
             disabled={isLocked}
-            className="min-h-20 w-64"
+            className="min-h-20 w-full sm:w-80"
           />
         ) : config.type === "number" ? (
           <Input
@@ -297,16 +338,16 @@ function ConfigField({ config, value, configI18n, content, onChange }: ConfigFie
             value={value as number}
             onChange={(e) => onChange(Number(e.target.value))}
             disabled={isLocked}
-            className="w-32"
+            className="w-full sm:w-40"
           />
         ) : (
           <Input
             id={config.key}
-            type="text"
+            type={showValues ? "text" : "password"}
             value={value as string}
             onChange={(e) => onChange(e.target.value)}
             disabled={isLocked}
-            className="w-64"
+            className="w-full sm:w-80"
           />
         )}
       </div>
@@ -328,6 +369,7 @@ function SelectField({
   onChange: (value: unknown) => void
 }) {
   const getOptionLabel = (option: SelectOption) => {
+    if (!option.labelKey) return option.value
     const optionI18n = configI18n[option.labelKey as keyof typeof configI18n] as
       | { label?: { value: string } }
       | undefined
@@ -340,7 +382,7 @@ function SelectField({
       onValueChange={onChange}
       disabled={disabled}
     >
-      <SelectTrigger className="w-48">
+      <SelectTrigger className="w-full sm:w-56">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
@@ -359,7 +401,7 @@ function SelectField({
 
 function ConfigSkeleton() {
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="flex-1 space-y-6 p-4 sm:p-6">
       <div className="space-y-2">
         <Skeleton className="h-8 w-32" />
         <Skeleton className="h-4 w-64" />

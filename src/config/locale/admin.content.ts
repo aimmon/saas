@@ -41,6 +41,8 @@ export default {
       cancel: t({ en: "Cancel", zh: "取消" }),
       saveSuccess: t({ en: "Configuration saved", zh: "配置已保存" }),
       saveFailed: t({ en: "Failed to save", zh: "保存失败" }),
+      showValues: t({ en: "Show values", zh: "显示值" }),
+      hideValues: t({ en: "Hide values", zh: "隐藏值" }),
     },
   },
 } satisfies Dictionary

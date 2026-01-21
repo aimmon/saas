@@ -99,7 +99,7 @@ export const getUserActiveSubscriptionAction = createServerFn({ method: "GET" })
     }
 
     try {
-      const paymentService = new PaymentService()
+      const paymentService = await PaymentService.create()
 
       const subscriptions = await paymentService.getSubscriptionsByUserId({
         userId: session.user.id,

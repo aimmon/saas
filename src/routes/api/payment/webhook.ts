@@ -1,14 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router"
-import { websiteConfig } from "@/config/website-config"
 import { PaymentService } from "@/integrations/payment"
 import { logger } from "@/shared/lib/tools/logger"
 import { Resp } from "@/shared/lib/tools/response"
+import { getConfig } from "@/shared/model/config.model"
 
 export const Route = createFileRoute("/api/payment/webhook")({
   server: {
     handlers: {
       GET: async () => {
-        const paymentProvider = websiteConfig.payment?.provider || "stripe"
+        const paymentProvider = await getConfig("payment_provider")
 
         return Resp.json(200, "Webhook endpoint is active", {
           status: "ready",
@@ -19,7 +19,7 @@ export const Route = createFileRoute("/api/payment/webhook")({
         try {
           const body = await request.text()
           const headersList = request.headers
-          const paymentService = new PaymentService()
+          const paymentService = await PaymentService.create()
 
           // Get signature for different payment providers
           let signature: string | null = null

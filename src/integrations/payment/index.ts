@@ -1,4 +1,4 @@
-import { websiteConfig } from "@/config/website-config"
+import { getAllConfigs } from "@/shared/model/config.model"
 import { CreemAdapter } from "./adapter/creem"
 import type { PaymentAdapter } from "./adapter/interface"
 import { StripeAdapter } from "./adapter/stripe"
@@ -7,47 +7,45 @@ export class PaymentService {
   private readonly adapter: PaymentAdapter
   public readonly provider: string
 
-  constructor() {
-    this.provider = websiteConfig.payment?.provider || "stripe"
+  private constructor(adapter: PaymentAdapter, provider: string) {
+    this.adapter = adapter
+    this.provider = provider
+  }
 
-    switch (this.provider) {
+  static async create(): Promise<PaymentService> {
+    const configs = await getAllConfigs()
+    const provider = configs.payment_provider
+
+    let adapter: PaymentAdapter
+    switch (provider) {
       case "stripe":
-        this.adapter = new StripeAdapter(
-          process.env.STRIPE_SECRET_KEY,
-          process.env.STRIPE_WEBHOOK_SECRET
+        adapter = new StripeAdapter(
+          configs.payment_stripe_secret_key,
+          configs.payment_stripe_webhook_secret
         )
         break
       case "creem":
-        this.adapter = new CreemAdapter(
-          process.env.CREEM_X_API_KEY,
-          process.env.CREEM_TEST_MODE === "true",
-          process.env.CREEM_WEBHOOK_SECRET
+        adapter = new CreemAdapter(
+          configs.payment_creem_x_api_key,
+          configs.payment_creem_test_mode,
+          configs.payment_creem_webhook_secret
         )
         break
       default:
-        throw new Error(`Unsupported payment adapter: ${this.provider}`)
+        throw new Error(`Unsupported payment adapter: ${provider}`)
     }
+
+    return new PaymentService(adapter, provider)
   }
 
-  /**
-   * Create checkout session
-   */
   async createCheckout(params: Parameters<PaymentAdapter["createCheckout"]>[0]) {
     return this.adapter.createCheckout(params)
   }
 
-  /**
-   * Get subscriptions by user ID
-   */
-  async getSubscriptionsByUserId(
-    params: Parameters<PaymentAdapter["getSubscriptionsByUserId"]>[0]
-  ) {
+  async getSubscriptionsByUserId(params: Parameters<PaymentAdapter["getSubscriptionsByUserId"]>[0]) {
     return this.adapter.getSubscriptionsByUserId(params)
   }
 
-  /**
-   * Handle webhook events
-   */
   async handleWebhookEvent(payload: string, signature: string) {
     return this.adapter.handleWebhookEvent(payload, signature)
   }
