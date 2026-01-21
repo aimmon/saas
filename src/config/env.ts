@@ -1,15 +1,17 @@
-const isVite = typeof import.meta.env !== "undefined"
+let viteEnv: Record<string, string> | null = null
+try {
+  if (import.meta.env) viteEnv = import.meta.env
+} catch {}
 
-if (!isVite) {
-  const dotenv = await import("dotenv")
+if (!viteEnv) {
+  const dotenv = require("dotenv")
   dotenv.config({ path: ".env.local" })
   dotenv.config({ path: ".env.development" })
   dotenv.config({ path: ".env" })
 }
 
 function getEnv(key: string): string | undefined {
-  const value = isVite ? import.meta.env[key] : process.env[key]
-  return value ?? undefined
+  return viteEnv?.[key] ?? process.env[key]
 }
 
 export const env = {

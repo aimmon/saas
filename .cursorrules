@@ -56,3 +56,6 @@ const { powerBy } = useIntlayer("landing")
 
 <div>{powerBy.title.value}</div> // 务必使用 value 属性
 ```
+
+# 禁止
+未经用户的允许，禁止修改数据库的迁移文件，禁止允许迁移的命令

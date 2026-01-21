@@ -8,6 +8,57 @@ import type {
 export type ThemeId = "default" | string
 export type ColorMode = "light" | "dark" | "system" | string
 
+export type MetadataConfig = {
+  title: string
+  author?: string
+  description?: string
+  theme: {
+    defaultTheme: ThemeId
+    enableSwitch: boolean
+  }
+  mode: {
+    defaultMode: ColorMode
+    enableSwitch: boolean
+  }
+  images: {
+    ogImage?: string
+    logo?: string
+    isInvert?: boolean
+  }
+  social: {
+    github?: string
+    twitter?: string
+    discord?: string
+    youtube?: string
+    [k: string]: string | undefined
+  }
+}
+
+export type MailConfig = {
+  provider: "resend" | "custom"
+  contact: string
+}
+
+export type StorageConfig = {
+  provider: "cloudflare" | string
+}
+
+export type PaymentConfig = {
+  enabled: boolean
+  provider: PaymentAdapterType
+  credit: {
+    enabled: boolean
+    allowFreeUserPurchaseCredits: boolean
+    signupBonusCredits: {
+      enabled: boolean
+      amount: number
+      expireDays?: number
+    }
+    packages?: CreditPackageWithPrice[]
+  }
+  planWithPrice: PlanWithPrice[]
+}
+
 export type WebsiteConfig = {
   metadata: {
     title?: string

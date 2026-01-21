@@ -23,7 +23,7 @@ type User = {
   createdAt: string
 }
 
-export const Route = createFileRoute("/{-$locale}/admin/users/")({
+export const Route = createFileRoute("/{-$locale}/admin/users")({
   component: UsersPage,
 })
 

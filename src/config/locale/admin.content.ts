@@ -7,6 +7,7 @@ export default {
     welcome: t({ en: "Welcome to the admin panel", zh: "欢迎来到管理面板" }),
     sidebar: {
       users: t({ en: "Users", zh: "用户" }),
+      config: t({ en: "Settings", zh: "系统配置" }),
     },
     users: {
       title: t({ en: "User Management", zh: "用户管理" }),
@@ -28,6 +29,18 @@ export default {
         status: t({ en: "Status", zh: "状态" }),
         createdAt: t({ en: "Created At", zh: "注册时间" }),
       },
+    },
+    config: {
+      title: t({ en: "Configuration", zh: "系统配置" }),
+      description: t({
+        en: "Configure the system settings, changes take effect immediately",
+        zh: "配置系统设置，修改后立即生效",
+      }),
+      locked: t({ en: "Locked by Env", zh: "环境变量锁定" }),
+      save: t({ en: "Save", zh: "保存" }),
+      cancel: t({ en: "Cancel", zh: "取消" }),
+      saveSuccess: t({ en: "Configuration saved", zh: "配置已保存" }),
+      saveFailed: t({ en: "Failed to save", zh: "保存失败" }),
     },
   },
 } satisfies Dictionary

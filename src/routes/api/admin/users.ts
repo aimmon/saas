@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { desc } from "drizzle-orm"
 import { db, user } from "@/db"
-import { authMiddleware } from "@/shared/middleware/auth"
+import { adminMiddleware, authMiddleware } from "@/shared/middleware/auth"
 
 export const Route = createFileRoute("/api/admin/users")({
   server: {
-    middleware: [authMiddleware],
+    middleware: [adminMiddleware, authMiddleware],
     handlers: {
       GET: async () => {
         try {

@@ -1,7 +1,7 @@
 import type { DbTransaction } from "@/db"
 import type { credits as creditsTable } from "@/db/credit.schema"
 import { logger } from "@/shared/lib/tools/logger"
-import { getCreditsByUserId, getUserValidCredits, insertCredits } from "@/shared/model/credit"
+import { getCreditsByUserId, getUserValidCredits, insertCredits } from "@/shared/model/credit.model"
 import type { CreditsType } from "@/shared/types/credit"
 
 export interface IncreaseCreditsParams {
