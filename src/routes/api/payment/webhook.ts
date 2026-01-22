@@ -8,7 +8,7 @@ export const Route = createFileRoute("/api/payment/webhook")({
   server: {
     handlers: {
       GET: async () => {
-        const paymentProvider = await getConfig("payment_provider")
+        const paymentProvider = await getConfig("public_payment_provider")
 
         return Resp.json(200, "Webhook endpoint is active", {
           status: "ready",

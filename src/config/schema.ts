@@ -6,8 +6,18 @@ import {
   defineSubGroup,
 } from "@/shared/lib/config/helper"
 
+export type PublicConfig = Pick<
+  ConfigValues,
+  | "public_payment_provider"
+  | "public_credit_enable"
+  | "public_credit_allow_free_user_purchase"
+  | "public_credit_signup_bonus_enabled"
+  | "public_credit_signup_bonus_amount"
+  | "public_credit_signup_bonus_expire_days"
+>
+
 export const configSchema = defineConfig({
-  payment_provider: {
+  public_payment_provider: {
     type: "select",
     default: "stripe",
     env: "VITE_PAYMENT_PROVIDER",
@@ -50,36 +60,36 @@ export const configSchema = defineConfig({
     labelKey: "paymentCreemWebhookSecret",
     descriptionKey: "paymentCreemWebhookSecret",
   },
-  // credit
-  credit_enable: {
+  // credit (public)
+  public_credit_enable: {
     type: "boolean",
     default: false,
     env: "VITE_CREDIT_ENABLE",
     labelKey: "creditEnable",
     descriptionKey: "creditEnable",
   },
-  credit_allow_free_user_purchase: {
+  public_credit_allow_free_user_purchase: {
     type: "boolean",
     default: false,
     env: "VITE_CREDIT_ALLOW_FREE_USER_PURCHASE",
     labelKey: "creditAllowFreeUserPurchase",
     descriptionKey: "creditAllowFreeUserPurchase",
   },
-  credit_signup_bonus_enabled: {
+  public_credit_signup_bonus_enabled: {
     type: "boolean",
     default: false,
     env: "VITE_CREDIT_SIGNUP_BONUS_ENABLED",
     labelKey: "creditSignupBonusEnabled",
     descriptionKey: "creditSignupBonusEnabled",
   },
-  credit_signup_bonus_amount: {
+  public_credit_signup_bonus_amount: {
     type: "number",
     default: 0,
     env: "VITE_CREDIT_SIGNUP_BONUS_AMOUNT",
     labelKey: "creditSignupBonusAmount",
     descriptionKey: "creditSignupBonusAmount",
   },
-  credit_signup_bonus_expire_days: {
+  public_credit_signup_bonus_expire_days: {
     type: "number",
     default: 30,
     env: "VITE_CREDIT_SIGNUP_BONUS_EXPIRE_DAYS",
@@ -121,7 +131,7 @@ export const configGroups = [
   defineGroup({
     id: "payment",
     labelKey: "payment",
-    prefixes: ["payment_"],
+    prefixes: ["payment_", "public_payment_"],
     subGroups: [
       defineSubGroup({
         id: "payment-stripe",
@@ -142,20 +152,20 @@ export const configGroups = [
   defineGroup({
     id: "credit",
     labelKey: "credit",
-    prefixes: ["credit_"],
+    prefixes: ["credit_", "public_credit_"],
     subGroups: [
       defineSubGroup({
         id: "credit-basic",
         labelKey: "creditBasic",
-        keys: ["credit_enable", "credit_allow_free_user_purchase"],
+        keys: ["public_credit_enable", "public_credit_allow_free_user_purchase"],
       }),
       defineSubGroup({
         id: "credit-signup-bonus",
         labelKey: "creditSignupBonus",
         keys: [
-          "credit_signup_bonus_enabled",
-          "credit_signup_bonus_amount",
-          "credit_signup_bonus_expire_days",
+          "public_credit_signup_bonus_enabled",
+          "public_credit_signup_bonus_amount",
+          "public_credit_signup_bonus_expire_days",
         ],
       }),
     ],

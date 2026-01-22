@@ -17,12 +17,7 @@ import {
 } from "@/shared/components/ui/alert-dialog"
 import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/shared/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/shared/components/ui/dialog"
 import { Input } from "@/shared/components/ui/input"
 import { Label } from "@/shared/components/ui/label"
 import { Skeleton } from "@/shared/components/ui/skeleton"
@@ -36,6 +31,7 @@ import {
   TableRow,
 } from "@/shared/components/ui/table"
 import { Textarea } from "@/shared/components/ui/textarea"
+import { useGlobalStore } from "@/shared/store/global"
 import type { CreditPackage } from "@/shared/types/payment"
 
 export const Route = createFileRoute("/{-$locale}/admin/credit-packages")({
@@ -70,6 +66,7 @@ function CreditPackagesPage() {
   const content = useIntlayer("admin")
   const queryClient = useQueryClient()
   const formId = useId()
+  const { config } = useGlobalStore()
 
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingPackage, setEditingPackage] = useState<CreditPackage | null>(null)
@@ -203,7 +200,15 @@ function CreditPackagesPage() {
         title={content.creditPackages.title.value}
         description={content.creditPackages.description.value}
       >
-        <Button onClick={() => setIsDialogOpen(true)}>
+        <Button
+          onClick={() => {
+            if (!config?.public_credit_enable) {
+              toast.error(content.creditPackages.creditNotEnabled.value)
+              return
+            }
+            setIsDialogOpen(true)
+          }}
+        >
           <Plus className="mr-2 size-4" />
           {content.creditPackages.add}
         </Button>
@@ -214,7 +219,10 @@ function CreditPackagesPage() {
           <Coins className="size-5 text-muted-foreground" />
           <h2 className="text-base font-medium">{content.creditPackages.title}</h2>
           {packages && (
-            <Badge variant="secondary" className="ml-auto">
+            <Badge
+              variant="secondary"
+              className="ml-auto"
+            >
               {packages.length} {content.creditPackages.count}
             </Badge>
           )}
@@ -236,12 +244,24 @@ function CreditPackagesPage() {
               <TableBody>
                 {Array.from({ length: 3 }).map((_, i) => (
                   <TableRow key={i}>
-                    <TableCell className="pl-6"><Skeleton className="h-4 w-24" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                    <TableCell><Skeleton className="h-6 w-14 rounded-full" /></TableCell>
-                    <TableCell className="pr-6"><Skeleton className="h-8 w-20" /></TableCell>
+                    <TableCell className="pl-6">
+                      <Skeleton className="h-4 w-24" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-16" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-16" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-16" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-6 w-14 rounded-full" />
+                    </TableCell>
+                    <TableCell className="pr-6">
+                      <Skeleton className="h-8 w-20" />
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -254,9 +274,18 @@ function CreditPackagesPage() {
             </div>
             <h3 className="mt-4 text-base font-medium">{content.creditPackages.empty}</h3>
             <p className="mt-1 text-sm text-muted-foreground">{content.creditPackages.emptyDesc}</p>
-            <Button className="mt-4" onClick={() => setIsDialogOpen(true)}>
+            <Button
+              className="mt-4"
+              onClick={() => {
+                if (!config?.public_credit_enable) {
+                  toast.error(content.creditPackages.creditNotEnabled.value)
+                  return
+                }
+                setIsDialogOpen(true)
+              }}
+            >
               <Plus className="mr-2 size-4" />
-              {content.creditPackages.add}
+              {content.creditPackages.add.value}
             </Button>
           </div>
         ) : (
@@ -290,11 +319,15 @@ function CreditPackagesPage() {
                       {formatPrice(pkg.priceAmount, pkg.currency)}
                     </TableCell>
                     <TableCell className="tabular-nums">
-                      {pkg.expireDays ? `${pkg.expireDays} ${content.creditPackages.days}` : content.creditPackages.forever}
+                      {pkg.expireDays
+                        ? `${pkg.expireDays} ${content.creditPackages.days}`
+                        : content.creditPackages.forever}
                     </TableCell>
                     <TableCell>
                       <Badge variant={pkg.isActive ? "default" : "secondary"}>
-                        {pkg.isActive ? content.creditPackages.active : content.creditPackages.inactive}
+                        {pkg.isActive
+                          ? content.creditPackages.active
+                          : content.creditPackages.inactive}
                       </Badge>
                     </TableCell>
                     <TableCell className="pr-6">
@@ -323,14 +356,20 @@ function CreditPackagesPage() {
         )}
       </div>
 
-      <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
+      <Dialog
+        open={isDialogOpen}
+        onOpenChange={handleDialogClose}
+      >
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>
               {editingPackage ? content.creditPackages.edit : content.creditPackages.add}
             </DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-4"
+          >
             <div className="space-y-2">
               <Label htmlFor={`${formId}-name`}>{content.creditPackages.form.name}</Label>
               <Input
@@ -343,7 +382,9 @@ function CreditPackagesPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor={`${formId}-description`}>{content.creditPackages.form.description}</Label>
+              <Label htmlFor={`${formId}-description`}>
+                {content.creditPackages.form.description}
+              </Label>
               <Textarea
                 id={`${formId}-description`}
                 value={formData.description}
@@ -355,24 +396,35 @@ function CreditPackagesPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor={`${formId}-creditAmount`}>{content.creditPackages.form.creditAmount}</Label>
+                <Label htmlFor={`${formId}-creditAmount`}>
+                  {content.creditPackages.form.creditAmount}
+                </Label>
                 <Input
                   id={`${formId}-creditAmount`}
                   type="number"
                   value={formData.creditAmount}
-                  onChange={(e) => setFormData({ ...formData, creditAmount: Number(e.target.value) })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, creditAmount: Number(e.target.value) })
+                  }
                   min={1}
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor={`${formId}-expireDays`}>{content.creditPackages.form.expireDays}</Label>
+                <Label htmlFor={`${formId}-expireDays`}>
+                  {content.creditPackages.form.expireDays}
+                </Label>
                 <Input
                   id={`${formId}-expireDays`}
                   type="number"
                   value={formData.expireDays ?? ""}
-                  onChange={(e) => setFormData({ ...formData, expireDays: e.target.value ? Number(e.target.value) : null })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      expireDays: e.target.value ? Number(e.target.value) : null,
+                    })
+                  }
                   min={1}
                   placeholder={String(content.creditPackages.form.expireDaysHint.value)}
                 />
@@ -381,12 +433,16 @@ function CreditPackagesPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor={`${formId}-priceAmount`}>{content.creditPackages.form.priceAmount}</Label>
+                <Label htmlFor={`${formId}-priceAmount`}>
+                  {content.creditPackages.form.priceAmount}
+                </Label>
                 <Input
                   id={`${formId}-priceAmount`}
                   type="number"
                   value={formData.priceAmount}
-                  onChange={(e) => setFormData({ ...formData, priceAmount: Number(e.target.value) })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, priceAmount: Number(e.target.value) })
+                  }
                   min={1}
                   required
                 />
@@ -400,7 +456,9 @@ function CreditPackagesPage() {
                 <Input
                   id={`${formId}-currency`}
                   value={formData.currency}
-                  onChange={(e) => setFormData({ ...formData, currency: e.target.value.toUpperCase() })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, currency: e.target.value.toUpperCase() })
+                  }
                   maxLength={3}
                   required
                 />
@@ -408,7 +466,9 @@ function CreditPackagesPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor={`${formId}-stripePriceId`}>{content.creditPackages.form.stripePriceId}</Label>
+              <Label htmlFor={`${formId}-stripePriceId`}>
+                {content.creditPackages.form.stripePriceId}
+              </Label>
               <Input
                 id={`${formId}-stripePriceId`}
                 value={formData.stripePriceId}
@@ -420,7 +480,9 @@ function CreditPackagesPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor={`${formId}-sortOrder`}>{content.creditPackages.form.sortOrder}</Label>
+                <Label htmlFor={`${formId}-sortOrder`}>
+                  {content.creditPackages.form.sortOrder}
+                </Label>
                 <Input
                   id={`${formId}-sortOrder`}
                   type="number"
@@ -440,7 +502,11 @@ function CreditPackagesPage() {
             </div>
 
             <div className="flex justify-end gap-2 pt-4">
-              <Button type="button" variant="outline" onClick={handleDialogClose}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleDialogClose}
+              >
                 {content.creditPackages.form.cancel}
               </Button>
               <Button
@@ -454,13 +520,14 @@ function CreditPackagesPage() {
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={!!deletePackage} onOpenChange={() => setDeletePackage(null)}>
+      <AlertDialog
+        open={!!deletePackage}
+        onOpenChange={() => setDeletePackage(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{content.creditPackages.delete}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {content.creditPackages.confirmDelete}
-            </AlertDialogDescription>
+            <AlertDialogDescription>{content.creditPackages.confirmDelete}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{content.creditPackages.form.cancel}</AlertDialogCancel>

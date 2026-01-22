@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm"
 import { LRUCache } from "lru-cache"
-import { type ConfigValues, configResolver } from "@/config/schema"
+import { type ConfigValues, configResolver, type PublicConfig } from "@/config/schema"
 import { db } from "@/db"
 import { config } from "@/db/config.schema"
 
@@ -32,6 +32,11 @@ export async function getAllConfigs(): Promise<ConfigValues> {
 export async function getConfig<K extends keyof ConfigValues>(key: K): Promise<ConfigValues[K]> {
   const configs = await getAllConfigs()
   return configs[key]
+}
+
+export async function getPublicConfigs(): Promise<PublicConfig> {
+  const configs = await getAllConfigs()
+  return configResolver.filterPublicConfigs(configs) as PublicConfig
 }
 
 export function invalidateConfigCache() {

@@ -46,6 +46,7 @@ export default {
         en: "Manage purchasable credit packages",
         zh: "管理可购买的积分包",
       }),
+      creditNotEnabled: t({ en: "Credit is not enabled", zh: "积分功能未启用" }),
       count: t({ en: "packages", zh: "个积分包" }),
       empty: t({ en: "No credit packages", zh: "暂无积分包" }),
       emptyDesc: t({

@@ -19,6 +19,7 @@ import { Route as Char123LocaleChar125LoginIndexRouteImport } from './routes/{-$
 import { Route as Char123LocaleChar125AdminIndexRouteImport } from './routes/{-$locale}/admin/index'
 import { Route as Char123LocaleChar125LandingIndexRouteImport } from './routes/{-$locale}/_landing/index'
 import { Route as ApiUserIndexRouteImport } from './routes/api/user/index'
+import { Route as ApiConfigIndexRouteImport } from './routes/api/config/index'
 import { Route as Char123LocaleChar125AdminUsersRouteImport } from './routes/{-$locale}/admin/users'
 import { Route as Char123LocaleChar125AdminProductsRouteImport } from './routes/{-$locale}/admin/products'
 import { Route as Char123LocaleChar125AdminCreditPackagesRouteImport } from './routes/{-$locale}/admin/credit-packages'
@@ -89,6 +90,11 @@ const Char123LocaleChar125LandingIndexRoute =
 const ApiUserIndexRoute = ApiUserIndexRouteImport.update({
   id: '/api/user/',
   path: '/api/user/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiConfigIndexRoute = ApiConfigIndexRouteImport.update({
+  id: '/api/config/',
+  path: '/api/config/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Char123LocaleChar125AdminUsersRoute =
@@ -192,6 +198,7 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/admin/credit-packages': typeof Char123LocaleChar125AdminCreditPackagesRoute
   '/{-$locale}/admin/products': typeof Char123LocaleChar125AdminProductsRoute
   '/{-$locale}/admin/users': typeof Char123LocaleChar125AdminUsersRoute
+  '/api/config': typeof ApiConfigIndexRoute
   '/api/user': typeof ApiUserIndexRoute
   '/{-$locale}/': typeof Char123LocaleChar125LandingIndexRoute
   '/{-$locale}/admin/': typeof Char123LocaleChar125AdminIndexRoute
@@ -217,6 +224,7 @@ export interface FileRoutesByTo {
   '/{-$locale}/admin/credit-packages': typeof Char123LocaleChar125AdminCreditPackagesRoute
   '/{-$locale}/admin/products': typeof Char123LocaleChar125AdminProductsRoute
   '/{-$locale}/admin/users': typeof Char123LocaleChar125AdminUsersRoute
+  '/api/config': typeof ApiConfigIndexRoute
   '/api/user': typeof ApiUserIndexRoute
   '/{-$locale}/admin': typeof Char123LocaleChar125AdminIndexRoute
   '/{-$locale}/login': typeof Char123LocaleChar125LoginIndexRoute
@@ -244,6 +252,7 @@ export interface FileRoutesById {
   '/{-$locale}/admin/credit-packages': typeof Char123LocaleChar125AdminCreditPackagesRoute
   '/{-$locale}/admin/products': typeof Char123LocaleChar125AdminProductsRoute
   '/{-$locale}/admin/users': typeof Char123LocaleChar125AdminUsersRoute
+  '/api/config/': typeof ApiConfigIndexRoute
   '/api/user/': typeof ApiUserIndexRoute
   '/{-$locale}/_landing/': typeof Char123LocaleChar125LandingIndexRoute
   '/{-$locale}/admin/': typeof Char123LocaleChar125AdminIndexRoute
@@ -272,6 +281,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/admin/credit-packages'
     | '/{-$locale}/admin/products'
     | '/{-$locale}/admin/users'
+    | '/api/config'
     | '/api/user'
     | '/{-$locale}/'
     | '/{-$locale}/admin/'
@@ -297,6 +307,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/admin/credit-packages'
     | '/{-$locale}/admin/products'
     | '/{-$locale}/admin/users'
+    | '/api/config'
     | '/api/user'
     | '/{-$locale}/admin'
     | '/{-$locale}/login'
@@ -323,6 +334,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/admin/credit-packages'
     | '/{-$locale}/admin/products'
     | '/{-$locale}/admin/users'
+    | '/api/config/'
     | '/api/user/'
     | '/{-$locale}/_landing/'
     | '/{-$locale}/admin/'
@@ -343,6 +355,7 @@ export interface RootRouteChildren {
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiPaymentCheckoutRoute: typeof ApiPaymentCheckoutRoute
   ApiPaymentWebhookRoute: typeof ApiPaymentWebhookRoute
+  ApiConfigIndexRoute: typeof ApiConfigIndexRoute
   ApiUserIndexRoute: typeof ApiUserIndexRoute
 }
 
@@ -416,6 +429,13 @@ declare module '@tanstack/react-router' {
       path: '/api/user'
       fullPath: '/api/user'
       preLoaderRoute: typeof ApiUserIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/config/': {
+      id: '/api/config/'
+      path: '/api/config'
+      fullPath: '/api/config'
+      preLoaderRoute: typeof ApiConfigIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/{-$locale}/admin/users': {
@@ -613,6 +633,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiPaymentCheckoutRoute: ApiPaymentCheckoutRoute,
   ApiPaymentWebhookRoute: ApiPaymentWebhookRoute,
+  ApiConfigIndexRoute: ApiConfigIndexRoute,
   ApiUserIndexRoute: ApiUserIndexRoute,
 }
 export const routeTree = rootRouteImport

@@ -14,7 +14,7 @@ export class PaymentService {
 
   static async create(): Promise<PaymentService> {
     const configs = await getAllConfigs()
-    const provider = configs.payment_provider
+    const provider = configs.public_payment_provider
 
     let adapter: PaymentAdapter
     switch (provider) {
