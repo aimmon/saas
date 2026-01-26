@@ -89,7 +89,7 @@ export const Hero = () => {
           aria-labelledby={heroTitleId}
           className="relative"
         >
-          <div className="relative pt-28 lg:pt-32">
+          <div className="relative pt-6 md:pt-10">
             {/* Background gradient overlay */}
             <div
               aria-hidden="true"
