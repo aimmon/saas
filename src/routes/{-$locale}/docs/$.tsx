@@ -7,10 +7,10 @@ import { DocsBody, DocsDescription, DocsPage, DocsTitle } from "fumadocs-ui/layo
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared"
 import defaultMdxComponents from "fumadocs-ui/mdx"
 import { Suspense } from "react"
+import { source } from "@/config/content/source"
 import docsCss from "@/config/style/docs.css?url"
 import { getMDXComponents } from "@/shared/components/docs/mdx-components"
 import { i18n } from "@/shared/lib/i18n"
-import { source } from "@/shared/lib/source"
 
 export function baseOptions(): BaseLayoutProps {
   return {

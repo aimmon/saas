@@ -9,11 +9,13 @@ export const Route = createFileRoute("/{-$locale}/_main/_landing")({
 
 function RouteComponent() {
   return (
-    <main className="overflow-x-clip">
+    <div className="relative min-h-dvh overflow-x-clip">
       <Banner />
       <LandingHeader />
-      <Outlet />
-      <Footer />
-    </main>
+      <main>
+        <Outlet />
+        <Footer />
+      </main>
+    </div>
   )
 }

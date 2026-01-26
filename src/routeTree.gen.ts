@@ -36,6 +36,7 @@ import { Route as Char123LocaleChar125MainLandingRoadmapIndexRouteImport } from 
 import { Route as Char123LocaleChar125MainLandingChatIndexRouteImport } from './routes/{-$locale}/_main/_landing/chat/index'
 import { Route as Char123LocaleChar125MainLandingChangelogIndexRouteImport } from './routes/{-$locale}/_main/_landing/changelog/index'
 import { Route as Char123LocaleChar125MainLandingBlogIndexRouteImport } from './routes/{-$locale}/_main/_landing/blog/index'
+import { Route as Char123LocaleChar125MainLandingBlogSlugRouteImport } from './routes/{-$locale}/_main/_landing/blog/$slug'
 
 const Char123LocaleChar125RouteRoute =
   Char123LocaleChar125RouteRouteImport.update({
@@ -189,6 +190,12 @@ const Char123LocaleChar125MainLandingBlogIndexRoute =
     path: '/blog/',
     getParentRoute: () => Char123LocaleChar125MainLandingRouteRoute,
   } as any)
+const Char123LocaleChar125MainLandingBlogSlugRoute =
+  Char123LocaleChar125MainLandingBlogSlugRouteImport.update({
+    id: '/blog/$slug',
+    path: '/blog/$slug',
+    getParentRoute: () => Char123LocaleChar125MainLandingRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/{-$locale}': typeof Char123LocaleChar125MainLandingRouteRouteWithChildren
@@ -212,6 +219,7 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/admin/users': typeof Char123LocaleChar125MainAdminUsersRoute
   '/{-$locale}/': typeof Char123LocaleChar125MainLandingIndexRoute
   '/{-$locale}/admin/': typeof Char123LocaleChar125MainAdminIndexRoute
+  '/{-$locale}/blog/$slug': typeof Char123LocaleChar125MainLandingBlogSlugRoute
   '/{-$locale}/blog': typeof Char123LocaleChar125MainLandingBlogIndexRoute
   '/{-$locale}/changelog': typeof Char123LocaleChar125MainLandingChangelogIndexRoute
   '/{-$locale}/chat': typeof Char123LocaleChar125MainLandingChatIndexRoute
@@ -237,6 +245,7 @@ export interface FileRoutesByTo {
   '/{-$locale}/admin/products': typeof Char123LocaleChar125MainAdminProductsRoute
   '/{-$locale}/admin/users': typeof Char123LocaleChar125MainAdminUsersRoute
   '/{-$locale}/admin': typeof Char123LocaleChar125MainAdminIndexRoute
+  '/{-$locale}/blog/$slug': typeof Char123LocaleChar125MainLandingBlogSlugRoute
   '/{-$locale}/blog': typeof Char123LocaleChar125MainLandingBlogIndexRoute
   '/{-$locale}/changelog': typeof Char123LocaleChar125MainLandingChangelogIndexRoute
   '/{-$locale}/chat': typeof Char123LocaleChar125MainLandingChatIndexRoute
@@ -267,6 +276,7 @@ export interface FileRoutesById {
   '/{-$locale}/_main/admin/users': typeof Char123LocaleChar125MainAdminUsersRoute
   '/{-$locale}/_main/_landing/': typeof Char123LocaleChar125MainLandingIndexRoute
   '/{-$locale}/_main/admin/': typeof Char123LocaleChar125MainAdminIndexRoute
+  '/{-$locale}/_main/_landing/blog/$slug': typeof Char123LocaleChar125MainLandingBlogSlugRoute
   '/{-$locale}/_main/_landing/blog/': typeof Char123LocaleChar125MainLandingBlogIndexRoute
   '/{-$locale}/_main/_landing/changelog/': typeof Char123LocaleChar125MainLandingChangelogIndexRoute
   '/{-$locale}/_main/_landing/chat/': typeof Char123LocaleChar125MainLandingChatIndexRoute
@@ -296,6 +306,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/admin/users'
     | '/{-$locale}/'
     | '/{-$locale}/admin/'
+    | '/{-$locale}/blog/$slug'
     | '/{-$locale}/blog'
     | '/{-$locale}/changelog'
     | '/{-$locale}/chat'
@@ -321,6 +332,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/admin/products'
     | '/{-$locale}/admin/users'
     | '/{-$locale}/admin'
+    | '/{-$locale}/blog/$slug'
     | '/{-$locale}/blog'
     | '/{-$locale}/changelog'
     | '/{-$locale}/chat'
@@ -350,6 +362,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/_main/admin/users'
     | '/{-$locale}/_main/_landing/'
     | '/{-$locale}/_main/admin/'
+    | '/{-$locale}/_main/_landing/blog/$slug'
     | '/{-$locale}/_main/_landing/blog/'
     | '/{-$locale}/_main/_landing/changelog/'
     | '/{-$locale}/_main/_landing/chat/'
@@ -559,11 +572,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125MainLandingBlogIndexRouteImport
       parentRoute: typeof Char123LocaleChar125MainLandingRouteRoute
     }
+    '/{-$locale}/_main/_landing/blog/$slug': {
+      id: '/{-$locale}/_main/_landing/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/{-$locale}/blog/$slug'
+      preLoaderRoute: typeof Char123LocaleChar125MainLandingBlogSlugRouteImport
+      parentRoute: typeof Char123LocaleChar125MainLandingRouteRoute
+    }
   }
 }
 
 interface Char123LocaleChar125MainLandingRouteRouteChildren {
   Char123LocaleChar125MainLandingIndexRoute: typeof Char123LocaleChar125MainLandingIndexRoute
+  Char123LocaleChar125MainLandingBlogSlugRoute: typeof Char123LocaleChar125MainLandingBlogSlugRoute
   Char123LocaleChar125MainLandingBlogIndexRoute: typeof Char123LocaleChar125MainLandingBlogIndexRoute
   Char123LocaleChar125MainLandingChangelogIndexRoute: typeof Char123LocaleChar125MainLandingChangelogIndexRoute
   Char123LocaleChar125MainLandingChatIndexRoute: typeof Char123LocaleChar125MainLandingChatIndexRoute
@@ -574,6 +595,8 @@ const Char123LocaleChar125MainLandingRouteRouteChildren: Char123LocaleChar125Mai
   {
     Char123LocaleChar125MainLandingIndexRoute:
       Char123LocaleChar125MainLandingIndexRoute,
+    Char123LocaleChar125MainLandingBlogSlugRoute:
+      Char123LocaleChar125MainLandingBlogSlugRoute,
     Char123LocaleChar125MainLandingBlogIndexRoute:
       Char123LocaleChar125MainLandingBlogIndexRoute,
     Char123LocaleChar125MainLandingChangelogIndexRoute:

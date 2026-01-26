@@ -1,0 +1,12 @@
+@import 'tailwindcss';
+@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/preset.css';
+@import './theme.css';
+:root {
+  --fd-background: var(--background);
+  --fd-foreground: var(--foreground);
+  --fd-card: var(--card);
+  --fd-muted: var(--muted);
+  --fd-muted-foreground: var(--muted-foreground);
+  --fd-border: var(--border);
+}

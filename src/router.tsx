@@ -16,6 +16,7 @@ export const getRouter = () => {
     },
     defaultPreload: "intent",
     defaultNotFoundComponent: GlobalNotFoundComponent,
+    scrollRestoration: true,
   })
 
   setupRouterSsrQueryIntegration({ router, queryClient: rqContext.queryClient })

@@ -1,3 +1,17 @@
 @import 'tailwindcss';
 @import 'fumadocs-ui/css/neutral.css';
 @import 'fumadocs-ui/css/preset.css';
+
+:root,
+:root[class~="light"],
+.light,
+html,
+body {
+  --fd-background: 0 0% 100% !important;
+  background-color: hsl(var(--background)) !important;
+}
+
+.dark,
+:root[class~="dark"] {
+  --fd-background: 0 0% 3.9% !important;
+}
