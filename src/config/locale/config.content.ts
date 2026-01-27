@@ -3,6 +3,13 @@ import { type Dictionary, t } from "intlayer"
 export default {
   key: "admin-config",
   content: {
+    userAvatarProvider: {
+      label: t({ zh: "用户头像提供商", en: "User Avatar Provider" }),
+      description: t({
+        zh: "用户头像提供商，默认使用 OAuth 头像，也可以选择 Base64 编码或存储头像，如果选择存储头像，则需要配置存储服务",
+        en: "User avatar provider, default is OAuth avatar, you can also choose Base64 encoded or storage avatar, if you choose storage avatar, you need to configure storage service",
+      }),
+    },
     mailProvider: {
       label: t({ zh: "邮件服务商", en: "Mail Provider" }),
       description: t({ zh: "用于发送邮件的服务", en: "Service for sending emails" }),
@@ -184,7 +191,48 @@ export default {
         en: "Daily bonus credits refresh hour",
       }),
     },
+    // Storage
+    storageRegion: {
+      label: t({ zh: "存储区域", en: "Storage Region" }),
+      description: t({
+        zh: "S3 兼容存储的区域，Cloudflare R2 使用 auto",
+        en: "Region for S3 compatible storage, use auto for Cloudflare R2",
+      }),
+    },
+    storageBucketName: {
+      label: t({ zh: "存储桶名称", en: "Bucket Name" }),
+      description: t({ zh: "S3 兼容存储的存储桶名称", en: "Bucket name for S3 compatible storage" }),
+    },
+    storageAccessKeyId: {
+      label: t({ zh: "Access Key ID", en: "Access Key ID" }),
+      description: t({ zh: "S3 兼容存储的访问密钥 ID", en: "Access key ID for S3 compatible storage" }),
+    },
+    storageSecretAccessKey: {
+      label: t({ zh: "Secret Access Key", en: "Secret Access Key" }),
+      description: t({
+        zh: "S3 兼容存储的访问密钥",
+        en: "Secret access key for S3 compatible storage",
+      }),
+    },
+    storageEndpoint: {
+      label: t({ zh: "存储端点", en: "Storage Endpoint" }),
+      description: t({
+        zh: "S3 兼容存储的端点 URL，如 https://xxx.r2.cloudflarestorage.com",
+        en: "Endpoint URL for S3 compatible storage, e.g. https://xxx.r2.cloudflarestorage.com",
+      }),
+    },
+    storagePublicUrl: {
+      label: t({ zh: "公开访问 URL", en: "Public URL" }),
+      description: t({
+        zh: "用于公开访问文件的自定义域名，如 https://cdn.example.com",
+        en: "Custom domain for public file access, e.g. https://cdn.example.com",
+      }),
+    },
     groups: {
+      storage: {
+        title: t({ zh: "存储设置", en: "Storage Settings" }),
+        description: t({ zh: "S3 兼容存储服务配置", en: "S3 compatible storage service configuration" }),
+      },
       mail: {
         title: t({ zh: "邮件设置", en: "Mail Settings" }),
         description: t({ zh: "邮件服务配置", en: "Mail service configuration" }),

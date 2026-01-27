@@ -5,20 +5,42 @@
       "icon": "Calendar",
       "color": "#60A5FA",
       "items": [
-        { "title": "落地页视频介绍" }
+
+        { "title": "订阅管理面板", "description": "用户可自主管理订阅、升降级、取消续费" },
+        { "title": "邮件模板编辑器", "description": "可视化编辑邮件模板，支持自定义样式" },
+        { "title": "API 密钥管理", "description": "支持用户创建和管理 API 密钥" },
+        { "title": "Agent 代理模板修改系统", "description": "支持用户本地通过 AI Agent 快速修改模板代码" }
       ]
     },
     {
       "title": "进行中",
       "icon": "Loader",
       "color": "#F59E0B",
-      "items": []
+      "items": [
+        { "title": "更多支付适配器", "description": "完善 PayPal、微信支付、支付宝等支付渠道集成" },
+        { "title": "支持 AI 服务商集成", "description": "支持 OpenAI、DeepSeek、Replicate 等主流 AI 服务商集成，支持文本、图像、视频、音频生成" }
+      ]
     },
     {
       "title": "已上线",
       "icon": "Rocket",
       "color": "#34D399",
-      "items": []
+      "items": [
+        { "title": "TanStack Start 全栈框架", "description": "基于 React 19 + TanStack Router/Query 构建" },
+        { "title": "Better Auth 认证系统", "description": "支持邮箱登录、社交登录、魔法链接等多种认证方式" },
+        { "title": "多语言国际化", "description": "基于 intlayer 的完整国际化方案，支持中英文切换" },
+        { "title": "Stripe 支付与订阅", "description": "支持一次性支付和订阅付款，Webhook 自动处理" },
+        { "title": "积分系统", "description": "注册奖励、每日签到、积分购买与消费、积分历史记录" },
+        { "title": "Resend 邮件服务", "description": "React Email 模板 + Resend 发送服务" },
+        { "title": "后台管理系统", "description": "用户管理、配置管理、积分包管理、产品管理" },
+        { "title": "RBAC 权限控制", "description": "基于角色的细粒度权限管理" },
+        { "title": "Fumadocs 文档系统", "description": "支持 MDX 的文档站点" },
+        { "title": "博客系统", "description": "支持 MDX 的博客内容管理" },
+        { "title": "Changelog 更新日志", "description": "产品更新日志展示页面" },
+        { "title": "Waitlist 等待列表", "description": "产品预发布用户收集" },
+        { "title": "主题与暗黑模式", "description": "支持主题切换和系统主题跟随" },
+        { "title": "S3 存储服务集成", "description": "支持 S3 兼容的云存储服务，用于用户头像等文件上传" }
+      ]
     }
   ]
 }

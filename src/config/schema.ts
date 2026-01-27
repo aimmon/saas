@@ -246,13 +246,75 @@ export const configSchema = defineConfig({
     labelKey: "resendApiKey",
     descriptionKey: "resendApiKey",
   },
+  // user
+  user_avatar_provider: {
+    type: "select",
+    default: "default",
+    env: "VITE_USER_AVATAR_PROVIDER",
+    labelKey: "userAvatarProvider",
+    descriptionKey: "userAvatarProvider",
+    options: [{ value: "default" }, { value: "base64" }, { value: "storage" }],
+  },
+  // storage (S3 compatible)
+  storage_region: {
+    type: "string",
+    default: "auto",
+    env: "STORAGE_REGION",
+    labelKey: "storageRegion",
+    descriptionKey: "storageRegion",
+  },
+  storage_bucket_name: {
+    type: "string",
+    default: "",
+    env: "STORAGE_BUCKET_NAME",
+    labelKey: "storageBucketName",
+    descriptionKey: "storageBucketName",
+  },
+  storage_access_key_id: {
+    type: "string",
+    default: "",
+    env: "STORAGE_ACCESS_KEY_ID",
+    labelKey: "storageAccessKeyId",
+    descriptionKey: "storageAccessKeyId",
+  },
+  storage_secret_access_key: {
+    type: "string",
+    default: "",
+    env: "STORAGE_SECRET_ACCESS_KEY",
+    labelKey: "storageSecretAccessKey",
+    descriptionKey: "storageSecretAccessKey",
+  },
+  storage_endpoint: {
+    type: "string",
+    default: "",
+    env: "STORAGE_ENDPOINT",
+    labelKey: "storageEndpoint",
+    descriptionKey: "storageEndpoint",
+  },
+  storage_public_url: {
+    type: "string",
+    default: "",
+    env: "STORAGE_PUBLIC_URL",
+    labelKey: "storagePublicUrl",
+    descriptionKey: "storagePublicUrl",
+  },
 })
 
 export const configGroups = [
   defineGroup({
+    id: "storage",
+    labelKey: "storage",
+    prefixes: ["storage_"],
+  }),
+  defineGroup({
     id: "mail",
     labelKey: "mail",
     prefixes: ["mail_"],
+  }),
+  defineGroup({
+    id: "user",
+    labelKey: "user",
+    prefixes: ["user_"],
   }),
   defineGroup({
     id: "payment",
