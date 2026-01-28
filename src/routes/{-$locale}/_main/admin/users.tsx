@@ -29,7 +29,6 @@ function UsersPage() {
     queryFn: () => http<User[]>("/api/admin/users"),
     initialData: [],
   })
-  console.log(users, "user")
   return (
     <>
       <PageHeader
