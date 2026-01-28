@@ -1,4 +1,4 @@
-interface AbilityRule {
+export interface AbilityRule {
   permissionCode: string
   inverted: boolean
   conditions?: {
@@ -7,6 +7,20 @@ interface AbilityRule {
   }
 }
 
+type CheckContext = {
+  userId?: string
+  ownerId?: string
+  field?: string
+}
+
+/**
+ * Permission checker with allow-first strategy
+ *
+ * - Multiple roles' permissions are merged (union)
+ * - If any role allows, the action is allowed
+ * - super_admin with "*" permission can do anything regardless of other roles
+ * - "inverted" rules only affect within the same role, not across roles
+ */
 export class PermissionChecker {
   private rules: AbilityRule[]
 
@@ -14,52 +28,54 @@ export class PermissionChecker {
     this.rules = rules
   }
 
-  // CASL style: can(action, resource)
-  can(
-    action: string,
-    resource: string,
-    context?: { userId?: string; ownerId?: string; field?: string }
-  ): boolean {
+  can(action: string, resource: string, context?: CheckContext): boolean {
     const code = `${resource}:${action}`
 
-    // traverse from back to front, the later defined rules have higher priority (CASL semantic)
-    for (let i = this.rules.length - 1; i >= 0; i--) {
-      const rule = this.rules[i]
+    for (const rule of this.rules) {
+      if (rule.inverted) continue
 
-      // match permission code (supports wildcard)
       if (!this.matchCode(rule.permissionCode, code)) continue
 
-      // check conditions
-      if (rule.conditions) {
-        // ownOnly: can only operate on own resources
-        if (rule.conditions.ownOnly && context?.userId !== context?.ownerId) {
-          continue
-        }
-        // fields: field permission
-        if (rule.conditions.fields && context?.field) {
-          if (!rule.conditions.fields.includes(context.field)) continue
-        }
-      }
+      if (!this.checkConditions(rule, context)) continue
 
-      // match success, return whether it is can (not inverted)
-      return !rule.inverted
+      return true
     }
 
-    return false // default reject
+    return false
   }
 
-  // CASL style: cannot
-  cannot(action: string, resource: string, context?: any): boolean {
+  cannot(action: string, resource: string, context?: CheckContext): boolean {
     return !this.can(action, resource, context)
+  }
+
+  hasPermission(permissionCode: string): boolean {
+    const [resource, action] = permissionCode.split(":")
+    return this.can(action, resource)
+  }
+
+  private checkConditions(rule: AbilityRule, context?: CheckContext): boolean {
+    if (!rule.conditions) return true
+
+    if (rule.conditions.ownOnly && context?.userId !== context?.ownerId) {
+      return false
+    }
+
+    if (rule.conditions.fields && context?.field) {
+      if (!rule.conditions.fields.includes(context.field)) return false
+    }
+
+    return true
   }
 
   private matchCode(pattern: string, code: string): boolean {
     if (pattern === "*") return true
     if (pattern === code) return true
+
     if (pattern.endsWith(":*")) {
       const prefix = pattern.slice(0, -2)
       return code.startsWith(prefix + ":")
     }
+
     return false
   }
 }

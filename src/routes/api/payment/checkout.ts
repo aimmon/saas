@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router"
-import { env } from "@/config/env"
 import { getPlanById, getPriceById } from "@/config/payment-config"
 import { getDefaultPaymentAdapter, getPaymentAdapter } from "@/integrations/payment/"
 import { logger } from "@/shared/lib/tools/logger"
@@ -53,8 +52,8 @@ export const Route = createFileRoute("/api/payment/checkout")({
             priceId,
             email: user.email,
             userId,
-            successUrl: successUrl || `${env.BETTER_AUTH_URL}/dashboard?success=true`,
-            cancelUrl: cancelUrl || `${env.BETTER_AUTH_URL}/pricing`,
+            successUrl: successUrl || `${process.env.BETTER_AUTH_URL}/dashboard?success=true`,
+            cancelUrl: cancelUrl || `${process.env.BETTER_AUTH_URL}/pricing`,
             metadata: {
               ...metadata,
               planId,

@@ -92,6 +92,13 @@ const DEFAULT_ROLES = [
       'config:read',
     ],
   },
+  {
+    name: 'banned',
+    title: 'Banned User',
+    description: 'Banned users cannot access the system',
+    isSystem: true,
+    permissions: [],
+  },
 ];
 
 // ============================================================

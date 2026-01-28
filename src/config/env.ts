@@ -4,7 +4,8 @@ try {
 } catch {}
 
 if (!viteEnv) {
-  const dotenv = await import("dotenv")
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const dotenv = require("dotenv")
   dotenv.config({ path: ".env.local" })
   dotenv.config({ path: ".env.development" })
   dotenv.config({ path: ".env" })

@@ -8,15 +8,12 @@ import {
   Home,
   Languages,
   LogOut,
-  Moon,
   Package,
-  Sun,
   Users,
 } from "lucide-react"
-import { useEffect, useState } from "react"
 import { useIntlayer, useLocale } from "react-intlayer"
-import { useTheme } from "tanstack-theme-kit"
 import { LocalizedLink, type To } from "@/shared/components/locale/localized-link"
+import { AnimatedThemeToggler } from "@/shared/components/ui/animated-theme-toggler"
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avatar"
 import {
   DropdownMenu,
@@ -60,19 +57,6 @@ export default function AdminSidebar() {
   const { pathname } = useLocation()
   const { availableLocales, locale, setLocale } = useLocale()
   const pathWithoutLocale = getPathWithoutLocale(pathname)
-  const { theme, setTheme, systemTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  const currentTheme = theme === "system" ? systemTheme : theme
-  const isDark = currentTheme === "dark"
-
-  const toggleTheme = () => {
-    setTheme(isDark ? "light" : "dark")
-  }
 
   const mainNavItems: { title: string; url: To; icon: typeof Users; match: string }[] = [
     {
@@ -219,15 +203,7 @@ export default function AdminSidebar() {
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <button
-                type="button"
-                onClick={toggleTheme}
-                disabled={!mounted}
-                className="flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground disabled:opacity-50"
-                aria-label="Toggle theme"
-              >
-                {mounted && isDark ? <Moon className="size-4" /> : <Sun className="size-4" />}
-              </button>
+              <AnimatedThemeToggler className="flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground" />
             </div>
           </SidebarMenuItem>
         </SidebarMenu>

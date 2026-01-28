@@ -16,6 +16,8 @@ export const user = pgTable("user", {
   emailVerified: boolean("email_verified").default(false).notNull(),
   providerCustomers: jsonb("provider_customers").$type<ProviderCustomers>(),
   image: text("image"),
+  banned: boolean("banned").default(false),
+  bannedAt: timestamp("banned_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()

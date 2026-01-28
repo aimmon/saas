@@ -129,3 +129,8 @@ export async function getUserLatestDailyBonus(
 
   return data.length > 0 ? data[0] : null
 }
+
+export async function getUserCreditBalance(userId: string): Promise<number> {
+  const validCredits = await getUserValidCredits(userId)
+  return validCredits.reduce((sum, c) => sum + c.credits, 0)
+}

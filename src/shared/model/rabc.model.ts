@@ -1,5 +1,6 @@
-import { eq, inArray } from "drizzle-orm"
-import { db, role, rolePermission, userRole } from "@/db"
+import { and, asc, eq, inArray } from "drizzle-orm"
+import { db, role, rolePermission, user, userRole } from "@/db"
+import { getUuid } from "@/shared/lib/tools/hash"
 
 export async function getUserRolesByUserId(userId: string) {
   const roles = await db
@@ -9,13 +10,72 @@ export async function getUserRolesByUserId(userId: string) {
     })
     .from(userRole)
     .innerJoin(role, eq(userRole.roleId, role.id))
-    .where(
-      eq(userRole.userId, userId),
-    )
+    .where(eq(userRole.userId, userId))
 
   return roles
     .filter((r) => !r.userRole.expiresAt || r.userRole.expiresAt > new Date())
     .map((r) => r.role)
+}
+
+export async function getUserRolesWithExpiry(userId: string) {
+  const roles = await db
+    .select({
+      id: userRole.id,
+      roleId: role.id,
+      name: role.name,
+      title: role.title,
+      expiresAt: userRole.expiresAt,
+    })
+    .from(userRole)
+    .innerJoin(role, eq(userRole.roleId, role.id))
+    .where(eq(userRole.userId, userId))
+
+  return roles.filter((r) => !r.expiresAt || r.expiresAt > new Date())
+}
+
+export async function getAllRoles() {
+  return db.select().from(role).orderBy(asc(role.sort))
+}
+
+export async function assignRoleToUser(userId: string, roleId: string, expiresAt?: Date) {
+  const existing = await db
+    .select()
+    .from(userRole)
+    .where(and(eq(userRole.userId, userId), eq(userRole.roleId, roleId)))
+    .limit(1)
+
+  if (existing.length > 0) {
+    await db
+      .update(userRole)
+      .set({ expiresAt: expiresAt ?? null })
+      .where(eq(userRole.id, existing[0].id))
+    return existing[0]
+  }
+
+  const [result] = await db
+    .insert(userRole)
+    .values({
+      id: getUuid(),
+      userId,
+      roleId,
+      expiresAt: expiresAt ?? null,
+    })
+    .returning()
+
+  return result
+}
+
+export async function removeRoleFromUser(userId: string, roleId: string) {
+  await db.delete(userRole).where(and(eq(userRole.userId, userId), eq(userRole.roleId, roleId)))
+}
+
+export async function isUserBanned(userId: string): Promise<boolean> {
+  const [userData] = await db
+    .select({ banned: user.banned })
+    .from(user)
+    .where(eq(user.id, userId))
+    .limit(1)
+  return userData?.banned ?? false
 }
 
 export async function getUserPermissionRules(userId: string) {

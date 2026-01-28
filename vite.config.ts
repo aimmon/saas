@@ -10,6 +10,9 @@ import viteTsConfigPaths from "vite-tsconfig-paths"
 import * as MdxConfig from "./source.config"
 
 const config = defineConfig({
+  optimizeDeps: {
+    include: ["@radix-ui/react-tabs", "@radix-ui/react-collapsible", "@radix-ui/react-popover"],
+  },
   plugins: [
     intlayerProxy(), // must be placed before nitro
     devtools(),

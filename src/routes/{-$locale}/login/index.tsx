@@ -1,5 +1,5 @@
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile"
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, redirect } from "@tanstack/react-router"
 import { ChevronLeftIcon, Eye, EyeOff, Loader2 } from "lucide-react"
 import type React from "react"
 import { useId, useState } from "react"
@@ -11,9 +11,20 @@ import { Button } from "@/shared/components/ui/button"
 import { Input } from "@/shared/components/ui/input"
 import { Label } from "@/shared/components/ui/label"
 import { useAuthMutations } from "@/shared/hooks/use-auth-mutations"
+import { authClient } from "@/shared/lib/auth/auth-client"
 
 export const Route = createFileRoute("/{-$locale}/login/")({
   component: RouteComponent,
+  ssr: false,
+  beforeLoad: async () => {
+    const session = await authClient.getSession()
+    console.log(session, "session")
+    if (session.data?.user) {
+      throw redirect({
+        to: "/{-$locale}",
+      })
+    }
+  },
 })
 
 function RouteComponent() {

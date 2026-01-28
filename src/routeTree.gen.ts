@@ -22,6 +22,7 @@ import { Route as ApiCreditPackagesRouteImport } from './routes/api/credit/packa
 import { Route as ApiCreditHistoryRouteImport } from './routes/api/credit/history'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiAdminUsersRouteImport } from './routes/api/admin/users'
+import { Route as ApiAdminRolesRouteImport } from './routes/api/admin/roles'
 import { Route as ApiAdminCreditPackagesRouteImport } from './routes/api/admin/credit-packages'
 import { Route as ApiAdminConfigRouteImport } from './routes/api/admin/config'
 import { Route as Char123LocaleChar125MainAdminRouteRouteImport } from './routes/{-$locale}/_main/admin/route'
@@ -38,8 +39,11 @@ import { Route as Char123LocaleChar125MainLandingRoadmapRouteImport } from './ro
 import { Route as Char123LocaleChar125MainLandingChatRouteImport } from './routes/{-$locale}/_main/_landing/chat'
 import { Route as Char123LocaleChar125MainLandingChangelogRouteImport } from './routes/{-$locale}/_main/_landing/changelog'
 import { Route as ApiPaymentWebhookProviderRouteImport } from './routes/api/payment/webhook.$provider'
+import { Route as ApiAdminUsersIdRouteImport } from './routes/api/admin/users/$id'
 import { Route as Char123LocaleChar125MainLandingBlogIndexRouteImport } from './routes/{-$locale}/_main/_landing/blog/index'
 import { Route as Char123LocaleChar125MainLandingBlogSlugRouteImport } from './routes/{-$locale}/_main/_landing/blog/$slug'
+import { Route as ApiAdminUsersIdRolesRouteImport } from './routes/api/admin/users/$id/roles'
+import { Route as ApiAdminUsersIdBanRouteImport } from './routes/api/admin/users/$id/ban'
 
 const Char123LocaleChar125RouteRoute =
   Char123LocaleChar125RouteRouteImport.update({
@@ -109,6 +113,11 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 const ApiAdminUsersRoute = ApiAdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
+  getParentRoute: () => ApiAdminRouteRoute,
+} as any)
+const ApiAdminRolesRoute = ApiAdminRolesRouteImport.update({
+  id: '/roles',
+  path: '/roles',
   getParentRoute: () => ApiAdminRouteRoute,
 } as any)
 const ApiAdminCreditPackagesRoute = ApiAdminCreditPackagesRouteImport.update({
@@ -204,6 +213,11 @@ const ApiPaymentWebhookProviderRoute =
     path: '/api/payment/webhook/$provider',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiAdminUsersIdRoute = ApiAdminUsersIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiAdminUsersRoute,
+} as any)
 const Char123LocaleChar125MainLandingBlogIndexRoute =
   Char123LocaleChar125MainLandingBlogIndexRouteImport.update({
     id: '/blog/',
@@ -216,6 +230,16 @@ const Char123LocaleChar125MainLandingBlogSlugRoute =
     path: '/blog/$slug',
     getParentRoute: () => Char123LocaleChar125MainLandingRouteRoute,
   } as any)
+const ApiAdminUsersIdRolesRoute = ApiAdminUsersIdRolesRouteImport.update({
+  id: '/roles',
+  path: '/roles',
+  getParentRoute: () => ApiAdminUsersIdRoute,
+} as any)
+const ApiAdminUsersIdBanRoute = ApiAdminUsersIdBanRouteImport.update({
+  id: '/ban',
+  path: '/ban',
+  getParentRoute: () => ApiAdminUsersIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/{-$locale}': typeof Char123LocaleChar125MainLandingRouteRouteWithChildren
@@ -226,13 +250,15 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/admin': typeof Char123LocaleChar125MainAdminRouteRouteWithChildren
   '/api/admin/config': typeof ApiAdminConfigRoute
   '/api/admin/credit-packages': typeof ApiAdminCreditPackagesRoute
-  '/api/admin/users': typeof ApiAdminUsersRoute
+  '/api/admin/roles': typeof ApiAdminRolesRoute
+  '/api/admin/users': typeof ApiAdminUsersRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/credit/history': typeof ApiCreditHistoryRoute
   '/api/credit/packages': typeof ApiCreditPackagesRoute
   '/api/payment/checkout': typeof ApiPaymentCheckoutRoute
   '/{-$locale}/docs/$': typeof Char123LocaleChar125DocsSplatRoute
   '/{-$locale}/login/': typeof Char123LocaleChar125LoginIndexRoute
+  '/api/admin/users/$id': typeof ApiAdminUsersIdRouteWithChildren
   '/api/payment/webhook/$provider': typeof ApiPaymentWebhookProviderRoute
   '/{-$locale}/changelog': typeof Char123LocaleChar125MainLandingChangelogRoute
   '/{-$locale}/chat': typeof Char123LocaleChar125MainLandingChatRoute
@@ -245,6 +271,8 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/': typeof Char123LocaleChar125MainLandingIndexRoute
   '/{-$locale}/admin/': typeof Char123LocaleChar125MainAdminIndexRoute
   '/{-$locale}/chat/': typeof Char123LocaleChar125MainChatIndexRoute
+  '/api/admin/users/$id/ban': typeof ApiAdminUsersIdBanRoute
+  '/api/admin/users/$id/roles': typeof ApiAdminUsersIdRolesRoute
   '/{-$locale}/blog/$slug': typeof Char123LocaleChar125MainLandingBlogSlugRoute
   '/{-$locale}/blog/': typeof Char123LocaleChar125MainLandingBlogIndexRoute
 }
@@ -256,13 +284,15 @@ export interface FileRoutesByTo {
   '/{-$locale}/404': typeof Char123LocaleChar125404Route
   '/api/admin/config': typeof ApiAdminConfigRoute
   '/api/admin/credit-packages': typeof ApiAdminCreditPackagesRoute
-  '/api/admin/users': typeof ApiAdminUsersRoute
+  '/api/admin/roles': typeof ApiAdminRolesRoute
+  '/api/admin/users': typeof ApiAdminUsersRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/credit/history': typeof ApiCreditHistoryRoute
   '/api/credit/packages': typeof ApiCreditPackagesRoute
   '/api/payment/checkout': typeof ApiPaymentCheckoutRoute
   '/{-$locale}/docs/$': typeof Char123LocaleChar125DocsSplatRoute
   '/{-$locale}/login': typeof Char123LocaleChar125LoginIndexRoute
+  '/api/admin/users/$id': typeof ApiAdminUsersIdRouteWithChildren
   '/api/payment/webhook/$provider': typeof ApiPaymentWebhookProviderRoute
   '/{-$locale}/changelog': typeof Char123LocaleChar125MainLandingChangelogRoute
   '/{-$locale}/chat': typeof Char123LocaleChar125MainChatIndexRoute
@@ -273,6 +303,8 @@ export interface FileRoutesByTo {
   '/{-$locale}/admin/products': typeof Char123LocaleChar125MainAdminProductsRoute
   '/{-$locale}/admin/users': typeof Char123LocaleChar125MainAdminUsersRoute
   '/{-$locale}/admin': typeof Char123LocaleChar125MainAdminIndexRoute
+  '/api/admin/users/$id/ban': typeof ApiAdminUsersIdBanRoute
+  '/api/admin/users/$id/roles': typeof ApiAdminUsersIdRolesRoute
   '/{-$locale}/blog/$slug': typeof Char123LocaleChar125MainLandingBlogSlugRoute
   '/{-$locale}/blog': typeof Char123LocaleChar125MainLandingBlogIndexRoute
 }
@@ -288,13 +320,15 @@ export interface FileRoutesById {
   '/{-$locale}/_main/admin': typeof Char123LocaleChar125MainAdminRouteRouteWithChildren
   '/api/admin/config': typeof ApiAdminConfigRoute
   '/api/admin/credit-packages': typeof ApiAdminCreditPackagesRoute
-  '/api/admin/users': typeof ApiAdminUsersRoute
+  '/api/admin/roles': typeof ApiAdminRolesRoute
+  '/api/admin/users': typeof ApiAdminUsersRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/credit/history': typeof ApiCreditHistoryRoute
   '/api/credit/packages': typeof ApiCreditPackagesRoute
   '/api/payment/checkout': typeof ApiPaymentCheckoutRoute
   '/{-$locale}/docs/$': typeof Char123LocaleChar125DocsSplatRoute
   '/{-$locale}/login/': typeof Char123LocaleChar125LoginIndexRoute
+  '/api/admin/users/$id': typeof ApiAdminUsersIdRouteWithChildren
   '/api/payment/webhook/$provider': typeof ApiPaymentWebhookProviderRoute
   '/{-$locale}/_main/_landing/changelog': typeof Char123LocaleChar125MainLandingChangelogRoute
   '/{-$locale}/_main/_landing/chat': typeof Char123LocaleChar125MainLandingChatRoute
@@ -307,6 +341,8 @@ export interface FileRoutesById {
   '/{-$locale}/_main/_landing/': typeof Char123LocaleChar125MainLandingIndexRoute
   '/{-$locale}/_main/admin/': typeof Char123LocaleChar125MainAdminIndexRoute
   '/{-$locale}/_main/chat/': typeof Char123LocaleChar125MainChatIndexRoute
+  '/api/admin/users/$id/ban': typeof ApiAdminUsersIdBanRoute
+  '/api/admin/users/$id/roles': typeof ApiAdminUsersIdRolesRoute
   '/{-$locale}/_main/_landing/blog/$slug': typeof Char123LocaleChar125MainLandingBlogSlugRoute
   '/{-$locale}/_main/_landing/blog/': typeof Char123LocaleChar125MainLandingBlogIndexRoute
 }
@@ -321,6 +357,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/admin'
     | '/api/admin/config'
     | '/api/admin/credit-packages'
+    | '/api/admin/roles'
     | '/api/admin/users'
     | '/api/auth/$'
     | '/api/credit/history'
@@ -328,6 +365,7 @@ export interface FileRouteTypes {
     | '/api/payment/checkout'
     | '/{-$locale}/docs/$'
     | '/{-$locale}/login/'
+    | '/api/admin/users/$id'
     | '/api/payment/webhook/$provider'
     | '/{-$locale}/changelog'
     | '/{-$locale}/chat'
@@ -340,6 +378,8 @@ export interface FileRouteTypes {
     | '/{-$locale}/'
     | '/{-$locale}/admin/'
     | '/{-$locale}/chat/'
+    | '/api/admin/users/$id/ban'
+    | '/api/admin/users/$id/roles'
     | '/{-$locale}/blog/$slug'
     | '/{-$locale}/blog/'
   fileRoutesByTo: FileRoutesByTo
@@ -351,6 +391,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/404'
     | '/api/admin/config'
     | '/api/admin/credit-packages'
+    | '/api/admin/roles'
     | '/api/admin/users'
     | '/api/auth/$'
     | '/api/credit/history'
@@ -358,6 +399,7 @@ export interface FileRouteTypes {
     | '/api/payment/checkout'
     | '/{-$locale}/docs/$'
     | '/{-$locale}/login'
+    | '/api/admin/users/$id'
     | '/api/payment/webhook/$provider'
     | '/{-$locale}/changelog'
     | '/{-$locale}/chat'
@@ -368,6 +410,8 @@ export interface FileRouteTypes {
     | '/{-$locale}/admin/products'
     | '/{-$locale}/admin/users'
     | '/{-$locale}/admin'
+    | '/api/admin/users/$id/ban'
+    | '/api/admin/users/$id/roles'
     | '/{-$locale}/blog/$slug'
     | '/{-$locale}/blog'
   id:
@@ -382,6 +426,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/_main/admin'
     | '/api/admin/config'
     | '/api/admin/credit-packages'
+    | '/api/admin/roles'
     | '/api/admin/users'
     | '/api/auth/$'
     | '/api/credit/history'
@@ -389,6 +434,7 @@ export interface FileRouteTypes {
     | '/api/payment/checkout'
     | '/{-$locale}/docs/$'
     | '/{-$locale}/login/'
+    | '/api/admin/users/$id'
     | '/api/payment/webhook/$provider'
     | '/{-$locale}/_main/_landing/changelog'
     | '/{-$locale}/_main/_landing/chat'
@@ -401,6 +447,8 @@ export interface FileRouteTypes {
     | '/{-$locale}/_main/_landing/'
     | '/{-$locale}/_main/admin/'
     | '/{-$locale}/_main/chat/'
+    | '/api/admin/users/$id/ban'
+    | '/api/admin/users/$id/roles'
     | '/{-$locale}/_main/_landing/blog/$slug'
     | '/{-$locale}/_main/_landing/blog/'
   fileRoutesById: FileRoutesById
@@ -506,6 +554,13 @@ declare module '@tanstack/react-router' {
       path: '/users'
       fullPath: '/api/admin/users'
       preLoaderRoute: typeof ApiAdminUsersRouteImport
+      parentRoute: typeof ApiAdminRouteRoute
+    }
+    '/api/admin/roles': {
+      id: '/api/admin/roles'
+      path: '/roles'
+      fullPath: '/api/admin/roles'
+      preLoaderRoute: typeof ApiAdminRolesRouteImport
       parentRoute: typeof ApiAdminRouteRoute
     }
     '/api/admin/credit-packages': {
@@ -620,6 +675,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPaymentWebhookProviderRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/admin/users/$id': {
+      id: '/api/admin/users/$id'
+      path: '/$id'
+      fullPath: '/api/admin/users/$id'
+      preLoaderRoute: typeof ApiAdminUsersIdRouteImport
+      parentRoute: typeof ApiAdminUsersRoute
+    }
     '/{-$locale}/_main/_landing/blog/': {
       id: '/{-$locale}/_main/_landing/blog/'
       path: '/blog'
@@ -633,6 +695,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/{-$locale}/blog/$slug'
       preLoaderRoute: typeof Char123LocaleChar125MainLandingBlogSlugRouteImport
       parentRoute: typeof Char123LocaleChar125MainLandingRouteRoute
+    }
+    '/api/admin/users/$id/roles': {
+      id: '/api/admin/users/$id/roles'
+      path: '/roles'
+      fullPath: '/api/admin/users/$id/roles'
+      preLoaderRoute: typeof ApiAdminUsersIdRolesRouteImport
+      parentRoute: typeof ApiAdminUsersIdRoute
+    }
+    '/api/admin/users/$id/ban': {
+      id: '/api/admin/users/$id/ban'
+      path: '/ban'
+      fullPath: '/api/admin/users/$id/ban'
+      preLoaderRoute: typeof ApiAdminUsersIdBanRouteImport
+      parentRoute: typeof ApiAdminUsersIdRoute
     }
   }
 }
@@ -756,16 +832,44 @@ const Char123LocaleChar125RouteRouteWithChildren =
     Char123LocaleChar125RouteRouteChildren,
   )
 
+interface ApiAdminUsersIdRouteChildren {
+  ApiAdminUsersIdBanRoute: typeof ApiAdminUsersIdBanRoute
+  ApiAdminUsersIdRolesRoute: typeof ApiAdminUsersIdRolesRoute
+}
+
+const ApiAdminUsersIdRouteChildren: ApiAdminUsersIdRouteChildren = {
+  ApiAdminUsersIdBanRoute: ApiAdminUsersIdBanRoute,
+  ApiAdminUsersIdRolesRoute: ApiAdminUsersIdRolesRoute,
+}
+
+const ApiAdminUsersIdRouteWithChildren = ApiAdminUsersIdRoute._addFileChildren(
+  ApiAdminUsersIdRouteChildren,
+)
+
+interface ApiAdminUsersRouteChildren {
+  ApiAdminUsersIdRoute: typeof ApiAdminUsersIdRouteWithChildren
+}
+
+const ApiAdminUsersRouteChildren: ApiAdminUsersRouteChildren = {
+  ApiAdminUsersIdRoute: ApiAdminUsersIdRouteWithChildren,
+}
+
+const ApiAdminUsersRouteWithChildren = ApiAdminUsersRoute._addFileChildren(
+  ApiAdminUsersRouteChildren,
+)
+
 interface ApiAdminRouteRouteChildren {
   ApiAdminConfigRoute: typeof ApiAdminConfigRoute
   ApiAdminCreditPackagesRoute: typeof ApiAdminCreditPackagesRoute
-  ApiAdminUsersRoute: typeof ApiAdminUsersRoute
+  ApiAdminRolesRoute: typeof ApiAdminRolesRoute
+  ApiAdminUsersRoute: typeof ApiAdminUsersRouteWithChildren
 }
 
 const ApiAdminRouteRouteChildren: ApiAdminRouteRouteChildren = {
   ApiAdminConfigRoute: ApiAdminConfigRoute,
   ApiAdminCreditPackagesRoute: ApiAdminCreditPackagesRoute,
-  ApiAdminUsersRoute: ApiAdminUsersRoute,
+  ApiAdminRolesRoute: ApiAdminRolesRoute,
+  ApiAdminUsersRoute: ApiAdminUsersRouteWithChildren,
 }
 
 const ApiAdminRouteRouteWithChildren = ApiAdminRouteRoute._addFileChildren(

@@ -8,7 +8,6 @@ export * from "./payment.schema"
 export * from "./rbac.schema"
 export * from "./subscription.schema"
 
-import { env } from "@/config/env"
 import * as authSchema from "./auth.schema"
 import * as configSchema from "./config.schema"
 import * as creditSchema from "./credit.schema"
@@ -33,7 +32,7 @@ let _db: Database | null = null
 
 export function getDb(): Database {
   if (!_db) {
-    const url = env.DATABASE_URL || process.env.DATABASE_URL
+    const url = process.env.DATABASE_URL
     if (!url) {
       throw new Error("DATABASE_URL is not set")
     }
