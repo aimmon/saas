@@ -18,6 +18,7 @@ import { RadioGroup, RadioGroupItem } from "@/shared/components/ui/radio-group"
 import { useGlobalContext } from "@/shared/context/global.context"
 import { useLocalizedNavigate } from "@/shared/hooks/use-localized-navigate"
 import { usePlanComparison } from "@/shared/hooks/use-plan-comparison"
+import { http } from "@/shared/lib/tools/http-client"
 import { cn } from "@/shared/lib/utils"
 
 interface PricingCardsProps {
@@ -103,29 +104,24 @@ export function PricingCards({ variant = "default", onSuccess }: PricingCardsPro
 
       const endpoint = isUpgradeAction ? "/api/payment/upgrade" : "/api/payment/checkout"
 
-      const response = await fetch(endpoint, {
+      const data = await http<{ checkoutUrl?: string }>(endpoint, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: {
           planId,
           priceId,
           successUrl: `${window.location.origin}/dashboard/billing`,
-        }),
+        },
       })
 
-      if (!response.ok) {
-        throw new Error(isUpgradeAction ? "Upgrade request failed" : "Payment request failed")
-      }
-
-      return { data: await response.json(), isUpgradeAction }
+      return { data, isUpgradeAction }
     },
     onSuccess: (res) => {
       if (res?.isUpgradeAction) {
         toast.success("Subscription upgraded successfully!")
         onSuccess?.()
         window.location.reload()
-      } else if (res?.data?.data?.checkoutUrl) {
-        window.location.href = res.data.data.checkoutUrl
+      } else if (res?.data?.checkoutUrl) {
+        window.location.href = res.data.checkoutUrl
       } else {
         toast.error(content.paymentFailed.value)
       }

@@ -14,15 +14,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/components/ui/table"
-
-type User = {
-  id: string
-  name: string
-  email: string
-  emailVerified: boolean
-  image: string | null
-  createdAt: string
-}
+import { http } from "@/shared/lib/tools/http-client"
+import type { User } from "@/shared/types/user"
 
 export const Route = createFileRoute("/{-$locale}/_main/admin/users")({
   component: UsersPage,
@@ -31,18 +24,17 @@ export const Route = createFileRoute("/{-$locale}/_main/admin/users")({
 function UsersPage() {
   const content = useIntlayer("admin")
 
-  const { data: users, isLoading } = useQuery<User[]>({
+  const { data: users, isLoading } = useQuery({
     queryKey: ["admin", "users"],
-    queryFn: async () => {
-      const res = await fetch("/api/admin/users")
-      if (!res.ok) throw new Error("Failed to fetch users")
-      return res.json()
-    },
+    queryFn: async () => (await http<User[]>("/api/admin/users")) ?? [],
   })
 
   return (
     <>
-      <PageHeader title={content.users.title.value} description={content.users.description.value} />
+      <PageHeader
+        title={content.users.title.value}
+        description={content.users.description.value}
+      />
       <div className="overflow-hidden rounded-xl border bg-card">
         <div className="flex items-center gap-3 border-b px-6 py-4">
           <Users className="size-5 text-muted-foreground" />

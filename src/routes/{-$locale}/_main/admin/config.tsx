@@ -33,6 +33,7 @@ import type {
   ConfigSubGroup,
   SelectOption,
 } from "@/shared/lib/config/helper"
+import { http } from "@/shared/lib/tools/http-client"
 
 export const Route = createFileRoute("/{-$locale}/_main/admin/config")({
   component: ConfigPage,
@@ -58,29 +59,18 @@ function ConfigPage() {
 
   const { data: configs, isLoading } = useQuery({
     queryKey: ["admin", "configs"],
-    queryFn: async () => {
-      const res = await fetch("/api/admin/config")
-      if (!res.ok) throw new Error("Failed to fetch configs")
-      const json = await res.json()
-      return json.data as ConfigMeta[]
-    },
+    queryFn: async () => (await http<ConfigMeta[]>("/api/admin/config")) ?? [],
   })
 
   const mutation = useMutation({
     mutationFn: async (changes: { key: string; value: unknown }[]) => {
       const results = await Promise.all(
-        changes.map(async ({ key, value }) => {
-          const res = await fetch("/api/admin/config", {
+        changes.map(({ key, value }) =>
+          http("/api/admin/config", {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ key, value }),
+            body: { key, value },
           })
-          const json = await res.json()
-          if (!res.ok || json.code !== 200) {
-            throw new Error(json.message || `Failed to update ${key}`)
-          }
-          return json.data
-        })
+        )
       )
       return results
     },
@@ -94,9 +84,6 @@ function ConfigPage() {
       })
 
       toast.success(content.config.saveSuccess)
-    },
-    onError: (error) => {
-      toast.error(error.message || content.config.saveFailed)
     },
   })
 
@@ -505,7 +492,10 @@ function TimeHourField({
       >
         <SelectValue>{formatHour(value)}</SelectValue>
       </SelectTrigger>
-      <SelectContent position="popper" className="max-h-56">
+      <SelectContent
+        position="popper"
+        className="max-h-56"
+      >
         {hours.map((hour) => (
           <SelectItem
             key={hour}

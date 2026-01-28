@@ -20,6 +20,7 @@ import {
   TableRow,
 } from "@/shared/components/ui/table"
 import { useGlobalContext } from "@/shared/context/global.context"
+import { http } from "@/shared/lib/tools/http-client"
 import { cn } from "@/shared/lib/utils"
 import { CreditsType } from "@/shared/types/credit"
 import { CreditDetail } from "./account-panel"
@@ -82,13 +83,15 @@ export function CreditHistoryPanel() {
   const fetchHistory = useCallback(async () => {
     setLoading(true)
     try {
-      const response = await fetch(`/api/credit/history?page=${page}&limit=${limit}`)
-      const result = await response.json()
-      if (result.code === 200) {
-        setData(result.data)
+      const result = await http<CreditHistoryResponse>(
+        `/api/credit/history?page=${page}&limit=${limit}`,
+        { silent: true }
+      )
+      if (result) {
+        setData(result)
       }
-    } catch (error) {
-      console.error("Failed to fetch credit history:", error)
+    } catch {
+      // error handled by http client
     } finally {
       setLoading(false)
     }

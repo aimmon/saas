@@ -32,6 +32,7 @@ import {
 } from "@/shared/components/ui/table"
 import { Textarea } from "@/shared/components/ui/textarea"
 import { useGlobalContext } from "@/shared/context/global.context"
+import { http } from "@/shared/lib/tools/http-client"
 import type { CreditPackage } from "@/shared/types/payment"
 
 export const Route = createFileRoute("/{-$locale}/_main/admin/credit-packages")({
@@ -73,48 +74,31 @@ function CreditPackagesPage() {
   const [deletePackage, setDeletePackage] = useState<CreditPackage | null>(null)
   const [formData, setFormData] = useState<FormData>(defaultFormData)
 
-  const { data: packages, isLoading } = useQuery<CreditPackage[]>({
+  const { data: packages, isLoading } = useQuery({
     queryKey: ["admin", "credit-packages"],
-    queryFn: async () => {
-      const res = await fetch("/api/admin/credit-packages")
-      if (!res.ok) throw new Error("Failed to fetch")
-      const json = await res.json()
-      return json.data
-    },
+    queryFn: async () => (await http<CreditPackage[]>("/api/admin/credit-packages")) ?? [],
   })
 
   const createMutation = useMutation({
-    mutationFn: async (data: FormData) => {
-      const res = await fetch("/api/admin/credit-packages", {
+    mutationFn: (data: FormData) =>
+      http("/api/admin/credit-packages", {
         method: "POST",
-        body: JSON.stringify(data),
-      })
-      const json = await res.json()
-      if (!res.ok || json.code !== 200) throw new Error(json.message || "Failed to create")
-      return json.data
-    },
+        body: data,
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "credit-packages"] })
       setIsDialogOpen(false)
       resetForm()
       toast.success("Credit package created")
     },
-    onError: () => {
-      toast.error("Failed to create credit package")
-    },
   })
 
   const updateMutation = useMutation({
-    mutationFn: async (data: FormData & { id: string }) => {
-      const res = await fetch("/api/admin/credit-packages", {
+    mutationFn: (data: FormData & { id: string }) =>
+      http("/api/admin/credit-packages", {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      })
-      const json = await res.json()
-      if (!res.ok || json.code !== 200) throw new Error(json.message || "Failed to update")
-      return json.data
-    },
+        body: data,
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "credit-packages"] })
       setIsDialogOpen(false)
@@ -122,27 +106,17 @@ function CreditPackagesPage() {
       resetForm()
       toast.success("Credit package updated")
     },
-    onError: () => {
-      toast.error("Failed to update credit package")
-    },
   })
 
   const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const res = await fetch(`/api/admin/credit-packages?id=${id}`, {
+    mutationFn: (id: string) =>
+      http(`/api/admin/credit-packages?id=${id}`, {
         method: "DELETE",
-      })
-      const json = await res.json()
-      if (!res.ok || json.code !== 200) throw new Error(json.message || "Failed to delete")
-      return json.data
-    },
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "credit-packages"] })
       setDeletePackage(null)
       toast.success("Credit package deleted")
-    },
-    onError: () => {
-      toast.error("Failed to delete credit package")
     },
   })
 
