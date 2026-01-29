@@ -3,7 +3,7 @@ import { createContext, type ReactNode, useCallback, useContext, useMemo } from 
 import { getConfigFn } from "@/actions/config.action"
 import { getUserCreditsFn } from "@/actions/credit.action"
 import { getUserInfoFn } from "@/actions/user.action"
-import type { PublicConfig } from "@/config/schema"
+import type { PublicConfig } from "@/config/dynamic-config"
 import type { UserCredits, UserInfo } from "@/shared/types/user"
 
 type GlobalContextType = {

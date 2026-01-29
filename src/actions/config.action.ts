@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start"
-import { configResolver, type PublicConfig } from "@/config/schema"
+import { configResolver, type PublicConfig } from "@/config/dynamic-config"
 import { getConfigs } from "@/shared/model/config.model"
 
 export const getConfigFn = createServerFn({ method: "GET" }).handler(

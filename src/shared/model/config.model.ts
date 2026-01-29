@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm"
 import { LRUCache } from "lru-cache"
-import { type ConfigValues, configResolver, type PublicConfig } from "@/config/schema"
+import { type ConfigValues, configResolver, type PublicConfig } from "@/config/dynamic-config"
 import { db } from "@/db"
 import { config } from "@/db/config.schema"
 

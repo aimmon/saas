@@ -4,7 +4,7 @@ import { Eye, EyeOff, Lock } from "lucide-react"
 import { useState } from "react"
 import { useIntlayer } from "react-intlayer"
 import { toast } from "sonner"
-import { configGroups } from "@/config/schema"
+import { configGroups } from "@/config/dynamic-config"
 import { PageHeader } from "@/shared/components/admin"
 import { Button } from "@/shared/components/ui/button"
 import {
@@ -61,6 +61,7 @@ function ConfigPage() {
     queryKey: ["admin", "configs"],
     queryFn: () => http<ConfigMeta[]>("/api/admin/config"),
     initialData: [],
+    refetchOnWindowFocus: false,
   })
 
   const mutation = useMutation({

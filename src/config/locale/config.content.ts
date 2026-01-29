@@ -201,11 +201,17 @@ export default {
     },
     storageBucketName: {
       label: t({ zh: "存储桶名称", en: "Bucket Name" }),
-      description: t({ zh: "S3 兼容存储的存储桶名称", en: "Bucket name for S3 compatible storage" }),
+      description: t({
+        zh: "S3 兼容存储的存储桶名称",
+        en: "Bucket name for S3 compatible storage",
+      }),
     },
     storageAccessKeyId: {
       label: t({ zh: "Access Key ID", en: "Access Key ID" }),
-      description: t({ zh: "S3 兼容存储的访问密钥 ID", en: "Access key ID for S3 compatible storage" }),
+      description: t({
+        zh: "S3 兼容存储的访问密钥 ID",
+        en: "Access key ID for S3 compatible storage",
+      }),
     },
     storageSecretAccessKey: {
       label: t({ zh: "Secret Access Key", en: "Secret Access Key" }),
@@ -229,9 +235,16 @@ export default {
       }),
     },
     groups: {
+      user: {
+        title: t({ zh: "用户设置", en: "User Settings" }),
+        description: t({ zh: "用户配置", en: "User configuration" }),
+      },
       storage: {
         title: t({ zh: "存储设置", en: "Storage Settings" }),
-        description: t({ zh: "S3 兼容存储服务配置", en: "S3 compatible storage service configuration" }),
+        description: t({
+          zh: "S3 兼容存储服务配置",
+          en: "S3 compatible storage service configuration",
+        }),
       },
       mail: {
         title: t({ zh: "邮件设置", en: "Mail Settings" }),

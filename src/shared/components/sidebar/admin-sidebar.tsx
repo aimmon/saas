@@ -38,6 +38,7 @@ import {
 } from "@/shared/components/ui/sidebar"
 import { useGlobalContext } from "@/shared/context/global.context"
 import { signOut } from "@/shared/lib/auth/auth-client"
+import { cn } from "@/shared/lib/utils"
 
 function getInitials(name: string | undefined | null) {
   if (!name) return "U"
@@ -121,6 +122,10 @@ export default function AdminSidebar() {
                       asChild
                       isActive={isActive}
                       tooltip={item.title}
+                      className={cn(
+                        isActive && "border",
+                        !isActive && "hover:border-border text-primary/80"
+                      )}
                     >
                       <LocalizedLink to={item.url}>
                         <item.icon className="size-4" />
@@ -145,6 +150,10 @@ export default function AdminSidebar() {
                   asChild
                   isActive={isConfigActive}
                   tooltip={String(content.sidebar.config.value)}
+                  className={cn(
+                    isConfigActive && "border",
+                    !isConfigActive && "hover:border-border text-primary/80"
+                  )}
                 >
                   <LocalizedLink to="/admin/config">
                     <Cog className="size-4" />

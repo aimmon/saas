@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router"
-import { configResolver, configSchema } from "@/config/schema"
+import { configResolver, configSchema } from "@/config/dynamic-config"
 import { Resp } from "@/shared/lib/tools/response"
 import { getConfigs, setConfig } from "@/shared/model/config.model"
 

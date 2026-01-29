@@ -18,6 +18,7 @@ import { Route as ApiAdminRouteRouteImport } from './routes/api/admin/route'
 import { Route as Char123LocaleChar125LoginIndexRouteImport } from './routes/{-$locale}/login/index'
 import { Route as Char123LocaleChar125DocsSplatRouteImport } from './routes/{-$locale}/docs/$'
 import { Route as ApiPaymentCheckoutRouteImport } from './routes/api/payment/checkout'
+import { Route as ApiFileUploadRouteImport } from './routes/api/file/upload'
 import { Route as ApiCreditPackagesRouteImport } from './routes/api/credit/packages'
 import { Route as ApiCreditHistoryRouteImport } from './routes/api/credit/history'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
@@ -93,6 +94,11 @@ const Char123LocaleChar125DocsSplatRoute =
 const ApiPaymentCheckoutRoute = ApiPaymentCheckoutRouteImport.update({
   id: '/api/payment/checkout',
   path: '/api/payment/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiFileUploadRoute = ApiFileUploadRouteImport.update({
+  id: '/api/file/upload',
+  path: '/api/file/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiCreditPackagesRoute = ApiCreditPackagesRouteImport.update({
@@ -255,6 +261,7 @@ export interface FileRoutesByFullPath {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/credit/history': typeof ApiCreditHistoryRoute
   '/api/credit/packages': typeof ApiCreditPackagesRoute
+  '/api/file/upload': typeof ApiFileUploadRoute
   '/api/payment/checkout': typeof ApiPaymentCheckoutRoute
   '/{-$locale}/docs/$': typeof Char123LocaleChar125DocsSplatRoute
   '/{-$locale}/login/': typeof Char123LocaleChar125LoginIndexRoute
@@ -289,6 +296,7 @@ export interface FileRoutesByTo {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/credit/history': typeof ApiCreditHistoryRoute
   '/api/credit/packages': typeof ApiCreditPackagesRoute
+  '/api/file/upload': typeof ApiFileUploadRoute
   '/api/payment/checkout': typeof ApiPaymentCheckoutRoute
   '/{-$locale}/docs/$': typeof Char123LocaleChar125DocsSplatRoute
   '/{-$locale}/login': typeof Char123LocaleChar125LoginIndexRoute
@@ -325,6 +333,7 @@ export interface FileRoutesById {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/credit/history': typeof ApiCreditHistoryRoute
   '/api/credit/packages': typeof ApiCreditPackagesRoute
+  '/api/file/upload': typeof ApiFileUploadRoute
   '/api/payment/checkout': typeof ApiPaymentCheckoutRoute
   '/{-$locale}/docs/$': typeof Char123LocaleChar125DocsSplatRoute
   '/{-$locale}/login/': typeof Char123LocaleChar125LoginIndexRoute
@@ -362,6 +371,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/api/credit/history'
     | '/api/credit/packages'
+    | '/api/file/upload'
     | '/api/payment/checkout'
     | '/{-$locale}/docs/$'
     | '/{-$locale}/login/'
@@ -396,6 +406,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/api/credit/history'
     | '/api/credit/packages'
+    | '/api/file/upload'
     | '/api/payment/checkout'
     | '/{-$locale}/docs/$'
     | '/{-$locale}/login'
@@ -431,6 +442,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/api/credit/history'
     | '/api/credit/packages'
+    | '/api/file/upload'
     | '/api/payment/checkout'
     | '/{-$locale}/docs/$'
     | '/{-$locale}/login/'
@@ -459,6 +471,7 @@ export interface RootRouteChildren {
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiCreditHistoryRoute: typeof ApiCreditHistoryRoute
   ApiCreditPackagesRoute: typeof ApiCreditPackagesRoute
+  ApiFileUploadRoute: typeof ApiFileUploadRoute
   ApiPaymentCheckoutRoute: typeof ApiPaymentCheckoutRoute
   ApiPaymentWebhookProviderRoute: typeof ApiPaymentWebhookProviderRoute
 }
@@ -526,6 +539,13 @@ declare module '@tanstack/react-router' {
       path: '/api/payment/checkout'
       fullPath: '/api/payment/checkout'
       preLoaderRoute: typeof ApiPaymentCheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/file/upload': {
+      id: '/api/file/upload'
+      path: '/api/file/upload'
+      fullPath: '/api/file/upload'
+      preLoaderRoute: typeof ApiFileUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/credit/packages': {
@@ -882,6 +902,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiCreditHistoryRoute: ApiCreditHistoryRoute,
   ApiCreditPackagesRoute: ApiCreditPackagesRoute,
+  ApiFileUploadRoute: ApiFileUploadRoute,
   ApiPaymentCheckoutRoute: ApiPaymentCheckoutRoute,
   ApiPaymentWebhookProviderRoute: ApiPaymentWebhookProviderRoute,
 }

@@ -158,7 +158,7 @@ export class S3Service {
       const contentType = matches[1] || "image/png"
       const buffer = Buffer.from(matches[2], "base64")
 
-      const extension = this.getExtensionFromMimeType(contentType)
+      const extension = this.mimeToExtension(contentType)
       const finalFilename = filename.includes(".") ? filename : `${filename}.${extension}`
       const defaultFolder = contentType.startsWith("audio/") ? "audio" : "images"
 
@@ -191,7 +191,7 @@ export class S3Service {
       }
       const buffer = Buffer.from(await response.arrayBuffer())
       const contentType = response.headers.get("content-type") || "image/png"
-      const extension = this.getExtensionFromMimeType(contentType)
+      const extension = this.mimeToExtension(contentType)
       const finalFilename = filename.includes(".") ? filename : `${filename}.${extension}`
       return await this.uploadBuffer(buffer, finalFilename, {
         ...options,
@@ -236,13 +236,36 @@ export class S3Service {
     }
   }
 
+  async exists(key: string): Promise<boolean> {
+    try {
+      const url = this.buildUrl(key)
+      const client = await this.createClient()
+      const request = new Request(url, { method: "HEAD" })
+      const response = await client.fetch(request)
+      return response.ok
+    } catch {
+      return false
+    }
+  }
+
+  getPublicUrl(key: string): string {
+    if (this.config.customDomain) {
+      return `${this.config.customDomain}/${key}`
+    }
+    return this.buildUrl(key)
+  }
+
+  getExtensionFromMimeType(mimeType: string): string {
+    return this.mimeToExtension(mimeType)
+  }
+
   generateTimestampKey(filename: string, folder?: string): string {
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-")
     const finalFilename = `${timestamp}-${filename}`
     return folder ? `${folder}/${finalFilename}` : finalFilename
   }
 
-  private getExtensionFromMimeType(mimeType: string): string {
+  private mimeToExtension(mimeType: string): string {
     const mimeToExt: Record<string, string> = {
       "image/jpeg": "jpg",
       "image/jpg": "jpg",
