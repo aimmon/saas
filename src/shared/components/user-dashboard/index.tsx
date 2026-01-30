@@ -1,4 +1,4 @@
-import { CoinsIcon, MenuIcon, UserIcon } from "lucide-react"
+import { CoinsIcon, MenuIcon, ShoppingCartIcon, UserIcon } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { useIntlayer } from "react-intlayer"
 import { Dialog, DialogContent, DialogTitle } from "@/shared/components/ui/dialog"
@@ -12,24 +12,39 @@ import { useGlobalContext } from "@/shared/context/global.context"
 import { cn } from "@/shared/lib/utils"
 import { AccountPanel } from "./account-panel"
 import { CreditHistoryPanel } from "./credit-history-panel"
+import { CreditPackagesPanel } from "./credit-packages-panel"
 import { SettingsPanel } from "./settings-panel"
 
 interface UserDashboardProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  defaultPanel?: string
 }
 
-export const UserDashboard = ({ open, onOpenChange }: UserDashboardProps) => {
-  const [currentMenuId, setCurrentMenuId] = useState("account")
+export const UserDashboard = ({ open, onOpenChange, defaultPanel }: UserDashboardProps) => {
+  const [currentMenuId, setCurrentMenuId] = useState(defaultPanel || "account")
   const [isOverflowing, setIsOverflowing] = useState(false)
   const tabsRef = useRef<HTMLDivElement>(null)
-  const { userInfo } = useGlobalContext()
+  const { userInfo, config } = useGlobalContext()
   const { menu: menuLabels } = useIntlayer("user-dashboard")
+
+  const creditEnabled = config?.public_credit_enable ?? false
 
   const menu = [
     { id: "account", label: menuLabels.account.value, icon: UserIcon },
-    { id: "credit-history", label: menuLabels.usage.value, icon: CoinsIcon },
+    ...(creditEnabled
+      ? [
+          { id: "credit-history", label: menuLabels.usage.value, icon: CoinsIcon },
+          { id: "credit-packages", label: menuLabels.topUp.value, icon: ShoppingCartIcon },
+        ]
+      : []),
   ]
+
+  useEffect(() => {
+    if (open && defaultPanel) {
+      setCurrentMenuId(defaultPanel)
+    }
+  }, [open, defaultPanel])
 
   useEffect(() => {
     const checkOverflow = () => {
@@ -120,10 +135,11 @@ export const UserDashboard = ({ open, onOpenChange }: UserDashboardProps) => {
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 py-6 md:py-8 px-4 md:px-5 overflow-y-auto">
+        <main className="flex-1 py-6 md:py-8 px-4 md:px-5 overflow-hidden">
           {currentMenuId === "account" && <AccountPanel />}
           {currentMenuId === "settings" && <SettingsPanel />}
           {currentMenuId === "credit-history" && <CreditHistoryPanel />}
+          {currentMenuId === "credit-packages" && <CreditPackagesPanel />}
         </main>
       </DialogContent>
     </Dialog>

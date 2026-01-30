@@ -115,9 +115,9 @@ export default {
     userMenu: {
       login: t({ en: "Login", zh: "登录" }),
       avatarAlt: t({ en: "User avatar", zh: "用户头像" }),
+      credits: t({ en: "Credits", zh: "积分" }),
       profile: t({ en: "Profile", zh: "个人资料" }),
       settings: t({ en: "Settings", zh: "设置" }),
-      billing: t({ en: "Billing", zh: "订阅管理" }),
       logout: t({ en: "Logout", zh: "退出登录" }),
     },
   },

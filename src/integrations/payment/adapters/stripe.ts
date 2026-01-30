@@ -296,13 +296,18 @@ export class StripeAdapter implements PaymentAdapter {
 
     let metadata: Record<string, string> = {}
     const subscriptionId = this.getSubscriptionIdFromInvoice(invoice)
+    const paymentIntentId = (invoice as unknown as { payment_intent?: string }).payment_intent
+
     if (subscriptionId) {
       const sub = await this.stripe.subscriptions.retrieve(subscriptionId)
       metadata = (sub.metadata as Record<string, string>) || {}
+    } else if (paymentIntentId) {
+      const paymentIntent = await this.stripe.paymentIntents.retrieve(paymentIntentId)
+      metadata = (paymentIntent.metadata as Record<string, string>) || {}
     }
 
     return {
-      providerPaymentId: invoice.id,
+      providerPaymentId: paymentIntentId || invoice.id,
       providerInvoiceId: invoice.id,
       providerCustomerId: invoice.customer as string,
       amount: invoice.amount_paid,

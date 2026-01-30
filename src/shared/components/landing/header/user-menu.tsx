@@ -1,4 +1,4 @@
-import { CreditCardIcon, LogOutIcon, SettingsIcon, UserIcon } from "lucide-react"
+import { CoinsIcon, LogOutIcon, SettingsIcon, UserIcon } from "lucide-react"
 import { useState } from "react"
 import { useIntlayer } from "react-intlayer"
 import { LocalizedLink, type To } from "@/shared/components/locale/localized-link"
@@ -30,8 +30,10 @@ function getInitials(name: string | undefined | null) {
 
 export function UserMenu() {
   const { userMenu } = useIntlayer("auth")
-  const { userInfo, isLoadingUserInfo } = useGlobalContext()
+  const { userInfo, credits, config, isLoadingUserInfo } = useGlobalContext()
+  const creditEnabled = config?.public_credit_enable ?? false
   const [isOpenUserDashboard, setIsOpenUserDashboard] = useState(false)
+  const [defaultPanel, setDefaultPanel] = useState<string | undefined>()
 
   if (isLoadingUserInfo) {
     return <Skeleton className="size-9 rounded-full" />
@@ -90,6 +92,30 @@ export function UserMenu() {
 
           <DropdownMenuSeparator />
 
+          {creditEnabled && (
+            <>
+              <DropdownMenuGroup>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setDefaultPanel("credit-packages")
+                    setIsOpenUserDashboard(true)
+                  }}
+                  className="cursor-pointer"
+                >
+                  <CoinsIcon className="size-4" />
+                  <div className="flex flex-1 items-center justify-between">
+                    <span>{userMenu.credits.value}</span>
+                    <span className="tabular-nums text-muted-foreground">
+                      {credits?.userCredits ?? 0}
+                    </span>
+                  </div>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+
+              <DropdownMenuSeparator />
+            </>
+          )}
+
           <DropdownMenuGroup>
             <DropdownMenuItem asChild>
               <LocalizedLink
@@ -101,20 +127,14 @@ export function UserMenu() {
               </LocalizedLink>
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => setIsOpenUserDashboard(true)}
+              onClick={() => {
+                setDefaultPanel(undefined)
+                setIsOpenUserDashboard(true)
+              }}
               className="cursor-pointer"
             >
               <SettingsIcon className="size-4" />
               <span>{userMenu.settings.value}</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <LocalizedLink
-                to={"/billing" as To}
-                className="cursor-pointer"
-              >
-                <CreditCardIcon className="size-4" />
-                <span>{userMenu.billing.value}</span>
-              </LocalizedLink>
             </DropdownMenuItem>
           </DropdownMenuGroup>
 
@@ -134,6 +154,7 @@ export function UserMenu() {
       <UserDashboard
         open={isOpenUserDashboard}
         onOpenChange={setIsOpenUserDashboard}
+        defaultPanel={defaultPanel}
       />
     </>
   )

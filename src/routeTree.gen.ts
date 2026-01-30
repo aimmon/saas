@@ -17,6 +17,7 @@ import { Route as Char123LocaleChar125MainRouteRouteImport } from './routes/{-$l
 import { Route as ApiAdminRouteRouteImport } from './routes/api/admin/route'
 import { Route as Char123LocaleChar125LoginIndexRouteImport } from './routes/{-$locale}/login/index'
 import { Route as Char123LocaleChar125DocsSplatRouteImport } from './routes/{-$locale}/docs/$'
+import { Route as ApiPaymentCreditCheckoutRouteImport } from './routes/api/payment/credit-checkout'
 import { Route as ApiPaymentCheckoutRouteImport } from './routes/api/payment/checkout'
 import { Route as ApiFileUploadRouteImport } from './routes/api/file/upload'
 import { Route as ApiCreditPackagesRouteImport } from './routes/api/credit/packages'
@@ -91,6 +92,12 @@ const Char123LocaleChar125DocsSplatRoute =
     id: '/$',
     path: '/$',
     getParentRoute: () => Char123LocaleChar125DocsRouteRoute,
+  } as any)
+const ApiPaymentCreditCheckoutRoute =
+  ApiPaymentCreditCheckoutRouteImport.update({
+    id: '/api/payment/credit-checkout',
+    path: '/api/payment/credit-checkout',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPaymentCheckoutRoute = ApiPaymentCheckoutRouteImport.update({
   id: '/api/payment/checkout',
@@ -270,6 +277,7 @@ export interface FileRoutesByFullPath {
   '/api/credit/packages': typeof ApiCreditPackagesRoute
   '/api/file/upload': typeof ApiFileUploadRoute
   '/api/payment/checkout': typeof ApiPaymentCheckoutRoute
+  '/api/payment/credit-checkout': typeof ApiPaymentCreditCheckoutRoute
   '/{-$locale}/docs/$': typeof Char123LocaleChar125DocsSplatRoute
   '/{-$locale}/login/': typeof Char123LocaleChar125LoginIndexRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRouteWithChildren
@@ -306,6 +314,7 @@ export interface FileRoutesByTo {
   '/api/credit/packages': typeof ApiCreditPackagesRoute
   '/api/file/upload': typeof ApiFileUploadRoute
   '/api/payment/checkout': typeof ApiPaymentCheckoutRoute
+  '/api/payment/credit-checkout': typeof ApiPaymentCreditCheckoutRoute
   '/{-$locale}/docs/$': typeof Char123LocaleChar125DocsSplatRoute
   '/{-$locale}/login': typeof Char123LocaleChar125LoginIndexRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRouteWithChildren
@@ -344,6 +353,7 @@ export interface FileRoutesById {
   '/api/credit/packages': typeof ApiCreditPackagesRoute
   '/api/file/upload': typeof ApiFileUploadRoute
   '/api/payment/checkout': typeof ApiPaymentCheckoutRoute
+  '/api/payment/credit-checkout': typeof ApiPaymentCreditCheckoutRoute
   '/{-$locale}/docs/$': typeof Char123LocaleChar125DocsSplatRoute
   '/{-$locale}/login/': typeof Char123LocaleChar125LoginIndexRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRouteWithChildren
@@ -383,6 +393,7 @@ export interface FileRouteTypes {
     | '/api/credit/packages'
     | '/api/file/upload'
     | '/api/payment/checkout'
+    | '/api/payment/credit-checkout'
     | '/{-$locale}/docs/$'
     | '/{-$locale}/login/'
     | '/api/admin/users/$id'
@@ -419,6 +430,7 @@ export interface FileRouteTypes {
     | '/api/credit/packages'
     | '/api/file/upload'
     | '/api/payment/checkout'
+    | '/api/payment/credit-checkout'
     | '/{-$locale}/docs/$'
     | '/{-$locale}/login'
     | '/api/admin/users/$id'
@@ -456,6 +468,7 @@ export interface FileRouteTypes {
     | '/api/credit/packages'
     | '/api/file/upload'
     | '/api/payment/checkout'
+    | '/api/payment/credit-checkout'
     | '/{-$locale}/docs/$'
     | '/{-$locale}/login/'
     | '/api/admin/users/$id'
@@ -485,6 +498,7 @@ export interface RootRouteChildren {
   ApiCreditPackagesRoute: typeof ApiCreditPackagesRoute
   ApiFileUploadRoute: typeof ApiFileUploadRoute
   ApiPaymentCheckoutRoute: typeof ApiPaymentCheckoutRoute
+  ApiPaymentCreditCheckoutRoute: typeof ApiPaymentCreditCheckoutRoute
   ApiPaymentWebhookProviderRoute: typeof ApiPaymentWebhookProviderRoute
 }
 
@@ -545,6 +559,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/{-$locale}/docs/$'
       preLoaderRoute: typeof Char123LocaleChar125DocsSplatRouteImport
       parentRoute: typeof Char123LocaleChar125DocsRouteRoute
+    }
+    '/api/payment/credit-checkout': {
+      id: '/api/payment/credit-checkout'
+      path: '/api/payment/credit-checkout'
+      fullPath: '/api/payment/credit-checkout'
+      preLoaderRoute: typeof ApiPaymentCreditCheckoutRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/payment/checkout': {
       id: '/api/payment/checkout'
@@ -925,6 +946,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCreditPackagesRoute: ApiCreditPackagesRoute,
   ApiFileUploadRoute: ApiFileUploadRoute,
   ApiPaymentCheckoutRoute: ApiPaymentCheckoutRoute,
+  ApiPaymentCreditCheckoutRoute: ApiPaymentCreditCheckoutRoute,
   ApiPaymentWebhookProviderRoute: ApiPaymentWebhookProviderRoute,
 }
 export const routeTree = rootRouteImport

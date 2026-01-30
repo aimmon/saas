@@ -5,12 +5,14 @@ import {
   ChevronRightIcon,
   HistoryIcon,
   Loader2Icon,
+  RefreshCwIcon,
 } from "lucide-react"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { useIntlayer } from "react-intlayer"
 import { PricingDialog } from "@/shared/components/landing/pricing/pricing-dialog"
 import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
+import { ScrollArea } from "@/shared/components/ui/scroll-area"
 import {
   Table,
   TableBody,
@@ -56,13 +58,19 @@ function formatDate(dateString: string, locale: string) {
 export function CreditHistoryPanel() {
   const [data, setData] = useState<CreditHistoryResponse | null>(null)
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
+  const [pullDistance, setPullDistance] = useState(0)
   const [page, setPage] = useState(1)
   const [isPricingOpen, setIsPricingOpen] = useState(false)
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const startY = useRef(0)
+  const isPulling = useRef(false)
   const { userInfo } = useGlobalContext()
   const { history: t, creditTypes } = useIntlayer("user-dashboard")
   const locale = typeof window !== "undefined" ? document.documentElement.lang : "en"
   const planName = userInfo?.payment?.activePlan?.id ?? "free"
   const limit = 10
+  const pullThreshold = 60
 
   const creditTypeLabels: Record<string, string> = {
     [CreditsType.ADD_FIRST_REGISTRATION]: creditTypes.add_first_registration.value,
@@ -79,95 +87,168 @@ export function CreditHistoryPanel() {
     [CreditsType.DEDUCT_EXPIRED]: creditTypes.deduct_expired.value,
   }
 
-  const fetchHistory = useCallback(async () => {
-    setLoading(true)
-    try {
-      const result = await http<CreditHistoryResponse>(
-        `/api/credit/history?page=${page}&limit=${limit}`,
-        { silent: true }
-      )
-      if (result) {
-        setData(result)
+  const fetchHistory = useCallback(
+    async (isRefresh = false) => {
+      if (isRefresh) {
+        setRefreshing(true)
+      } else {
+        setLoading(true)
       }
-    } catch {
-      // error handled by http client
-    } finally {
-      setLoading(false)
-    }
-  }, [page])
+      try {
+        const result = await http<CreditHistoryResponse>(
+          `/api/credit/history?page=${page}&limit=${limit}`,
+          { silent: true }
+        )
+        if (result) {
+          setData(result)
+        }
+      } catch {
+        // error handled by http client
+      } finally {
+        setLoading(false)
+        setRefreshing(false)
+      }
+    },
+    [page]
+  )
 
   useEffect(() => {
     fetchHistory()
   }, [fetchHistory])
 
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    const scrollElement = scrollRef.current?.querySelector("[data-radix-scroll-area-viewport]")
+    if (scrollElement && scrollElement.scrollTop === 0) {
+      startY.current = e.touches[0].clientY
+      isPulling.current = true
+    }
+  }, [])
+
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      if (!isPulling.current || refreshing) return
+      const currentY = e.touches[0].clientY
+      const diff = currentY - startY.current
+      if (diff > 0) {
+        setPullDistance(Math.min(diff * 0.5, pullThreshold * 1.5))
+      }
+    },
+    [refreshing, pullThreshold]
+  )
+
+  const handleTouchEnd = useCallback(() => {
+    if (pullDistance >= pullThreshold && !refreshing) {
+      fetchHistory(true)
+    }
+    setPullDistance(0)
+    isPulling.current = false
+  }, [pullDistance, pullThreshold, refreshing, fetchHistory])
+
   const totalPages = data ? Math.ceil(data.total / limit) : 0
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-lg font-semibold">{t.title.value}</h2>
-        <p className="text-muted-foreground text-sm">{t.description.value}</p>
+    <div className="flex h-full flex-col">
+      <div className="shrink-0 space-y-6">
+        <div>
+          <h2 className="text-lg font-semibold">{t.title.value}</h2>
+          <p className="text-muted-foreground text-sm">{t.description.value}</p>
+        </div>
+        <CreditDetail
+          planName={planName}
+          onUpgradeClick={() => setIsPricingOpen(true)}
+        />
       </div>
-      <CreditDetail
-        planName={planName}
-        onUpgradeClick={() => setIsPricingOpen(true)}
-      />
 
       {loading ? (
-        <div className="flex items-center justify-center py-12">
+        <div className="flex flex-1 items-center justify-center">
           <Loader2Icon className="size-6 animate-spin text-muted-foreground" />
         </div>
       ) : !data?.data.length ? (
-        <div className="flex flex-col items-center justify-center py-12 text-center">
+        <div className="flex flex-1 flex-col items-center justify-center text-center">
           <HistoryIcon className="size-12 text-muted-foreground/50 mb-4" />
           <p className="text-muted-foreground">{t.empty.value}</p>
         </div>
       ) : (
-        <>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t.time.value}</TableHead>
-                <TableHead>{t.type.value}</TableHead>
-                <TableHead className="text-right">{t.change.value}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {data.data.map((record) => (
-                <TableRow key={record.id}>
-                  <TableCell className="text-muted-foreground text-sm">
-                    {formatDate(record.createdAt, locale)}
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={record.credits > 0 ? "secondary" : "outline"}
-                      className="font-normal"
-                    >
-                      {creditTypeLabels[record.creditsType] || record.creditsType}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <span
-                      className={cn(
-                        "inline-flex items-center gap-1 font-medium tabular-nums",
-                        record.credits > 0 ? "text-emerald-600" : "text-muted-foreground"
-                      )}
-                    >
-                      {record.credits > 0 ? (
-                        <ArrowUpIcon className="size-3" />
-                      ) : (
-                        <ArrowDownIcon className="size-3" />
-                      )}
-                      {record.credits > 0 ? `+${record.credits}` : record.credits}
-                    </span>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+        <div className="mt-6 flex min-h-0 flex-1 flex-col">
+          <div
+            ref={scrollRef}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            className="relative min-h-0 flex-1"
+          >
+            <div
+              className={cn(
+                "absolute left-0 right-0 flex items-center justify-center transition-opacity",
+                pullDistance > 0 || refreshing ? "opacity-100" : "opacity-0"
+              )}
+              style={{ top: -40, height: 40 }}
+            >
+              <RefreshCwIcon
+                className={cn(
+                  "size-5 text-muted-foreground transition-transform",
+                  refreshing && "animate-spin",
+                  pullDistance >= pullThreshold && !refreshing && "text-primary"
+                )}
+                style={{
+                  transform: refreshing ? undefined : `rotate(${pullDistance * 2}deg)`,
+                }}
+              />
+            </div>
+
+            <ScrollArea
+              className="h-full"
+              style={{
+                transform: pullDistance > 0 ? `translateY(${pullDistance}px)` : undefined,
+                transition: pullDistance === 0 ? "transform 0.2s ease-out" : undefined,
+              }}
+            >
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t.time.value}</TableHead>
+                    <TableHead>{t.type.value}</TableHead>
+                    <TableHead className="text-right">{t.change.value}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.data.map((record) => (
+                    <TableRow key={record.id}>
+                      <TableCell className="text-muted-foreground text-sm">
+                        {formatDate(record.createdAt, locale)}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={record.credits > 0 ? "secondary" : "outline"}
+                          className="font-normal"
+                        >
+                          {creditTypeLabels[record.creditsType] || record.creditsType}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <span
+                          className={cn(
+                            "inline-flex items-center gap-1 font-medium tabular-nums",
+                            record.credits > 0 ? "text-emerald-600" : "text-muted-foreground"
+                          )}
+                        >
+                          {record.credits > 0 ? (
+                            <ArrowUpIcon className="size-3" />
+                          ) : (
+                            <ArrowDownIcon className="size-3" />
+                          )}
+                          {record.credits > 0 ? `+${record.credits}` : record.credits}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </ScrollArea>
+          </div>
 
           {totalPages > 1 && (
-            <div className="flex items-center justify-between">
+            <div className="flex shrink-0 items-center justify-between pt-4">
               <p className="text-sm text-muted-foreground">
                 {t.totalRecords.value.replace("{count}", String(data.total))}
               </p>
@@ -198,7 +279,7 @@ export function CreditHistoryPanel() {
               </div>
             </div>
           )}
-        </>
+        </div>
       )}
 
       <PricingDialog

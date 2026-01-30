@@ -52,7 +52,7 @@ export const Route = createFileRoute("/api/payment/checkout")({
             userId,
             orderType: paymentType === "subscription" ? "subscription" : "credit_package",
             productId: priceId,
-            productName: `${plan.name} - ${price.name}`,
+            productName: `${plan.id} - ${price.interval || "one-time"}`,
             amount: price.amount,
             currency: price.currency,
             metadata: {
