@@ -1,4 +1,4 @@
-"use client";
+;
 
 import { Avatar, AvatarFallback } from "@/shared/components/ui/avatar";
 import { Button } from "@/shared/components/ui/button";

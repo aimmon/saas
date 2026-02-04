@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm"
 import { LRUCache } from "lru-cache"
 import { type ConfigValues, configResolver, type PublicConfig } from "@/config/dynamic-config"
-import { db } from "@/db"
+import { getDb } from "@/db"
 import { config } from "@/db/config.schema"
 
 const cache = new LRUCache<string, ConfigValues>({
@@ -10,11 +10,15 @@ const cache = new LRUCache<string, ConfigValues>({
 })
 
 export async function getConfigByName(name: string) {
+  const db = getDb()
+  if (!db) return null
   const [result] = await db.select().from(config).where(eq(config.name, name)).limit(1)
   return result?.value ?? null
 }
 
-export async function getConfigs() {
+export async function getConfigs(): Promise<Record<string, unknown>> {
+  const db = getDb()
+  if (!db) return {}
   const results = await db.select().from(config)
   return Object.fromEntries(results.map((r) => [r.name, r.value]))
 }
@@ -44,6 +48,10 @@ export function invalidateConfigCache() {
 }
 
 export async function setConfig(name: string, value: unknown) {
+  const db = getDb()
+  if (!db) {
+    throw new Error("Database is not configured. Cannot save config.")
+  }
   await db.insert(config).values({ name, value }).onConflictDoUpdate({
     target: config.name,
     set: { value },
@@ -52,6 +60,10 @@ export async function setConfig(name: string, value: unknown) {
 }
 
 export async function deleteConfig(name: string) {
+  const db = getDb()
+  if (!db) {
+    throw new Error("Database is not configured. Cannot delete config.")
+  }
   await db.delete(config).where(eq(config.name, name))
   invalidateConfigCache()
 }

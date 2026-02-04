@@ -1,5 +1,3 @@
-"use client"
-
 import { CheckIcon, CopyIcon, KeyIcon } from "lucide-react"
 import { useState } from "react"
 import { Button } from "@/shared/components/ui/button"

@@ -11,8 +11,13 @@ if (!viteEnv) {
   dotenv.config({ path: ".env" })
 }
 
+const devDefaults: Record<string, string> = {
+  VITE_APP_URL: "http://localhost:3377",
+  VITE_CURRENCY: "USD",
+}
+
 function getEnv(key: string): string | undefined {
-  return viteEnv?.[key] ?? process.env[key]
+  return viteEnv?.[key] ?? process.env[key] ?? devDefaults[key]
 }
 
 export const env = {

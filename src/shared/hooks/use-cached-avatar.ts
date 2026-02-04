@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect, useState } from "react"
 
 const AVATAR_CACHE_PREFIX = "avatar_cache_"

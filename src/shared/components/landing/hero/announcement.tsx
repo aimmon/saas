@@ -1,5 +1,3 @@
-"use client"
-
 import { ArrowRight } from "lucide-react"
 import type { Variants } from "motion/react"
 import { motion } from "motion/react"

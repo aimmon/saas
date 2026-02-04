@@ -4,45 +4,88 @@ import { getRequestHeaders } from "@tanstack/react-start/server"
 import { auth } from "@/shared/lib/auth/auth-server"
 import { Resp } from "@/shared/lib/tools/response"
 import { isUserAdmin } from "@/shared/model/rabc.model"
+import { isAuthEnabled } from "../lib/auth/auth-config"
 
-type Session = Awaited<ReturnType<typeof auth.api.getSession>>
+type Session = typeof auth extends null
+  ? null
+  : Awaited<ReturnType<NonNullable<typeof auth>["api"]["getSession"]>>
 
 /**
  * session middleware, pass session to handler context (can be null)
  */
 export const sessionMiddleware = createMiddleware().server(async ({ next }) => {
+  if (!isAuthEnabled || !auth) {
+    return await next({ context: { session: null } })
+  }
   const headers = getRequestHeaders()
   const session = await auth.api.getSession({ headers })
   return await next({ context: { session } })
 })
 
 /**
- * auth middleware, require user to be logged in, pass session to handler context
+ * API auth middleware, require user to be logged in, returns HTTP error responses
+ * Use this for API routes (/api/*)
  */
-export const authMiddleware = createMiddleware()
+export const apiAuthMiddleware = createMiddleware()
   .middleware([sessionMiddleware])
   .server(async ({ next, context }) => {
+    if (!isAuthEnabled) {
+      return Resp.error("Authentication is not configured", 503)
+    }
     if (!context.session) {
-      return Resp.error("Unauthorized", 401)
+      return Resp.error("Unauthorized", 401, "FORBIDDEN")
     }
     return await next({ context: { session: context.session as NonNullable<Session> } })
   })
 
 /**
- * strict auth middleware, will throw redirect to login page if user is not logged in
+ * Page auth middleware, redirects to login page if user is not logged in
+ * Use this for page routes
  */
-export const strictAuthMiddleware = createMiddleware()
+export const pageAuthMiddleware = createMiddleware()
   .middleware([sessionMiddleware])
   .server(async ({ next, context }) => {
+    if (!isAuthEnabled) {
+      throw redirect({ to: "/{-$locale}/404" })
+    }
     if (!context.session) {
       throw redirect({ to: "/{-$locale}/login" })
     }
     return await next({ context: { session: context.session as NonNullable<Session> } })
   })
 
-export const adminMiddleware = createMiddleware()
+/**
+ * API admin middleware, requires admin role, returns HTTP error responses
+ * Use this for admin API routes (/api/admin/*)
+ */
+export const apiAdminMiddleware = createMiddleware()
   .middleware([sessionMiddleware])
   .server(async ({ next, context }) => {
+    if (!isAuthEnabled) {
+      return Resp.error("Authentication is not configured", 503)
+    }
+    if (!context.session) {
+      return Resp.error("Unauthorized", 401, "FORBIDDEN")
+    }
+
+    const isAdmin = await isUserAdmin(context.session.user.id)
+    if (!isAdmin) {
+      return Resp.error("Forbidden", 403, "FORBIDDEN")
+    }
+
+    return await next()
+  })
+
+/**
+ * Page admin middleware, requires admin role, redirects to 404 if not admin
+ * Use this for admin page routes
+ */
+export const pageAdminMiddleware = createMiddleware()
+  .middleware([sessionMiddleware])
+  .server(async ({ next, context }) => {
+    if (!isAuthEnabled) {
+      throw redirect({ to: "/{-$locale}/404" })
+    }
     if (!context.session) {
       throw redirect({ to: "/{-$locale}/login" })
     }

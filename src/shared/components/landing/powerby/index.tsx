@@ -1,5 +1,3 @@
-"use client"
-
 import { Image } from "@unpic/react"
 import { useId } from "react"
 import { useIntlayer } from "react-intlayer"

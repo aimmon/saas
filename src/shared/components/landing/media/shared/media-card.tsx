@@ -1,5 +1,3 @@
-"use client"
-
 import { Image } from "@unpic/react"
 import { ExternalLink } from "lucide-react"
 import { LocalizedLink, type To } from "@/shared/components/locale/localized-link"
@@ -41,7 +39,10 @@ export const MediaCard = ({ item, index }: MediaCardProps) => {
         <div className="p-4 space-y-3 flex-1 flex flex-col">
           <div className={cn("flex items-center justify-between text-xs", "text-muted-foreground")}>
             <span className="font-medium">{item.source}</span>
-            <time dateTime={item.date} className="font-medium">
+            <time
+              dateTime={item.date}
+              className="font-medium"
+            >
               {item.date}
             </time>
           </div>
@@ -55,7 +56,10 @@ export const MediaCard = ({ item, index }: MediaCardProps) => {
           >
             {item.title}
             {item.external && (
-              <ExternalLink className="ml-1 inline-block size-4" aria-hidden="true" />
+              <ExternalLink
+                className="ml-1 inline-block size-4"
+                aria-hidden="true"
+              />
             )}
           </h3>
 

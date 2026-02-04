@@ -1,5 +1,3 @@
-"use client"
-
 import { cn } from "@/shared/lib/utils"
 import type { GridColumns, GridShowcaseProps } from "@/shared/types/landing"
 import { ShowcaseCard } from "./shared/showcase-card"

@@ -33,15 +33,24 @@ export type DbTransaction = Parameters<Parameters<Database["transaction"]>[0]>[0
 
 let _db: Database | null = null
 
-export function getDb(): Database {
+export const isDatabaseEnabled = !!process.env.DATABASE_URL
+
+export function getDb(): Database | null {
+  if (!isDatabaseEnabled) {
+    return null
+  }
   if (!_db) {
-    const url = process.env.DATABASE_URL
-    if (!url) {
-      throw new Error("DATABASE_URL is not set")
-    }
-    _db = drizzle(url, { schema })
+    _db = drizzle(process.env.DATABASE_URL!, { schema })
   }
   return _db
+}
+
+export function requireDb(): Database {
+  const database = getDb()
+  if (!database) {
+    throw new Error("Database is not configured. Please set DATABASE_URL environment variable.")
+  }
+  return database
 }
 
 export async function closeDb(): Promise<void> {
@@ -54,6 +63,6 @@ export async function closeDb(): Promise<void> {
 
 export const db = new Proxy({} as Database, {
   get(_, prop) {
-    return getDb()[prop as keyof Database]
+    return requireDb()[prop as keyof Database]
   },
 })

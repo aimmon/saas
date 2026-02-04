@@ -1,3 +1,4 @@
+import { getRouteApi } from "@tanstack/react-router"
 import { CoinsIcon, LogOutIcon, SettingsIcon, UserIcon } from "lucide-react"
 import { useState } from "react"
 import { useIntlayer } from "react-intlayer"
@@ -18,6 +19,8 @@ import { UserDashboard } from "@/shared/components/user-dashboard"
 import { useGlobalContext } from "@/shared/context/global.context"
 import { signOut } from "@/shared/lib/auth/auth-client"
 
+const routeApi = getRouteApi("/{-$locale}/_main")
+
 function getInitials(name: string | undefined | null) {
   if (!name) return "U"
   return name
@@ -31,9 +34,14 @@ function getInitials(name: string | undefined | null) {
 export function UserMenu() {
   const { userMenu } = useIntlayer("auth")
   const { userInfo, credits, config, isLoadingUserInfo } = useGlobalContext()
+  const { isAuthEnabled } = routeApi.useLoaderData()
   const creditEnabled = config?.public_credit_enable ?? false
   const [isOpenUserDashboard, setIsOpenUserDashboard] = useState(false)
   const [defaultPanel, setDefaultPanel] = useState<string | undefined>()
+
+  if (!isAuthEnabled) {
+    return null
+  }
 
   if (isLoadingUserInfo) {
     return <Skeleton className="size-9 rounded-full" />

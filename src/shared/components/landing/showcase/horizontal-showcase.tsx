@@ -1,5 +1,3 @@
-"use client"
-
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useCallback, useEffect, useId, useRef, useState } from "react"
 import { useIntlayer } from "react-intlayer"

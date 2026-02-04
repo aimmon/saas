@@ -1,5 +1,3 @@
-"use client"
-
 import { ArrowUp } from "lucide-react"
 import { useIntlayer } from "react-intlayer"
 import { LocalizedLink, type To } from "@/shared/components/locale/localized-link"
@@ -21,9 +19,7 @@ export const Footer = () => {
         <div className="grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-5">
           {footer.sections.map((section, index) => (
             <div key={index}>
-              <h3 className="text-sm font-semibold text-foreground">
-                {section.title.value}
-              </h3>
+              <h3 className="text-sm font-semibold text-foreground">{section.title.value}</h3>
               <ul className="mt-4 space-y-3">
                 {section.links.map((link, linkIndex) => (
                   <li key={linkIndex}>

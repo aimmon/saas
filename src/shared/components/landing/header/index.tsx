@@ -1,5 +1,3 @@
-"use client"
-
 import { useLocation } from "@tanstack/react-router"
 import { MenuIcon } from "lucide-react"
 import { useIntlayer } from "react-intlayer"

@@ -1,4 +1,4 @@
-"use client"
+
 import type { TargetAndTransition, Transition, Variant, Variants } from "motion/react"
 import { AnimatePresence, motion } from "motion/react"
 import React from "react"

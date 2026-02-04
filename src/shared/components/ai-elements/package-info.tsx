@@ -1,4 +1,4 @@
-"use client";
+;
 
 import { Badge } from "@/shared/components/ui/badge";
 import { cn } from "@/shared/lib/utils";

@@ -1,4 +1,4 @@
-"use client"
+
 
 import type { HTMLMotionProps, Transition } from "motion/react"
 import { motion } from "motion/react"

@@ -1,4 +1,4 @@
-"use client";
+;
 
 import { Alert, AlertDescription } from "@/shared/components/ui/alert";
 import { Button } from "@/shared/components/ui/button";

@@ -107,23 +107,46 @@ export class EmailContext {
   }
 }
 
+export const isEmailEnabled =
+  !!process.env.EMAIL_FROM &&
+  !!process.env.EMAIL_PROVIDER &&
+  (process.env.EMAIL_PROVIDER === "resend"
+    ? !!process.env.RESEND_API_KEY
+    : process.env.EMAIL_PROVIDER === "custom"
+      ? !!process.env.EMAIL_HOST && !!process.env.EMAIL_USER && !!process.env.EMAIL_PASSWORD
+      : false)
+
 export function createEmailContext(): EmailContext {
+  if (!process.env.EMAIL_PROVIDER) {
+    throw new Error("Email is not configured. Please set EMAIL_PROVIDER environment variable.")
+  }
+
   let strategy: EmailStrategy
 
   if (process.env.EMAIL_PROVIDER === "resend") {
-    strategy = new ResendEmailStrategy(process.env.RESEND_API_KEY!)
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error("RESEND_API_KEY is required when using Resend email provider")
+    }
+    strategy = new ResendEmailStrategy(process.env.RESEND_API_KEY)
   } else if (process.env.EMAIL_PROVIDER === "custom") {
+    if (!process.env.EMAIL_HOST || !process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+      throw new Error(
+        "EMAIL_HOST, EMAIL_USER and EMAIL_PASSWORD are required when using custom email provider"
+      )
+    }
     strategy = new NodemailerEmailStrategy({
-      host: process.env.EMAIL_HOST as string,
+      host: process.env.EMAIL_HOST,
       port: 465,
       secure: true,
       auth: {
-        user: process.env.EMAIL_USER as string,
-        pass: process.env.EMAIL_PASSWORD as string,
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD,
       },
     })
   } else {
-    throw new Error(`Unsupported email provider: ${process.env.EMAIL_PROVIDER}`)
+    throw new Error(
+      `Unsupported email provider: ${process.env.EMAIL_PROVIDER}. Supported: resend, custom`
+    )
   }
 
   return new EmailContext(strategy)

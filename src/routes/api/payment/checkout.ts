@@ -9,12 +9,12 @@ import {
 import { OrderService } from "@/services/order.service"
 import { logger } from "@/shared/lib/tools/logger"
 import { Resp } from "@/shared/lib/tools/response"
-import { strictAuthMiddleware } from "@/shared/middleware/auth.middleware"
+import { apiAuthMiddleware } from "@/shared/middleware/auth.middleware"
 import type { PaymentProvider } from "@/shared/types/payment"
 
 export const Route = createFileRoute("/api/payment/checkout")({
   server: {
-    middleware: [strictAuthMiddleware],
+    middleware: [apiAuthMiddleware],
     handlers: {
       POST: async ({ context, request }) => {
         try {

@@ -1,8 +1,10 @@
 import { and, asc, eq, inArray } from "drizzle-orm"
-import { db, role, rolePermission, user, userRole } from "@/db"
+import { getDb, role, rolePermission, user, userRole } from "@/db"
 import { getUuid } from "@/shared/lib/tools/hash"
 
 export async function getUserRolesByUserId(userId: string) {
+  const db = getDb()
+  if (!db) return []
   const roles = await db
     .select({
       role: role,
@@ -18,6 +20,8 @@ export async function getUserRolesByUserId(userId: string) {
 }
 
 export async function getUserRolesWithExpiry(userId: string) {
+  const db = getDb()
+  if (!db) return []
   const roles = await db
     .select({
       id: userRole.id,
@@ -34,10 +38,14 @@ export async function getUserRolesWithExpiry(userId: string) {
 }
 
 export async function getAllRoles() {
+  const db = getDb()
+  if (!db) return []
   return db.select().from(role).orderBy(asc(role.sort))
 }
 
 export async function assignRoleToUser(userId: string, roleId: string, expiresAt?: Date) {
+  const db = getDb()
+  if (!db) throw new Error("Database is not configured")
   const existing = await db
     .select()
     .from(userRole)
@@ -66,10 +74,14 @@ export async function assignRoleToUser(userId: string, roleId: string, expiresAt
 }
 
 export async function removeRoleFromUser(userId: string, roleId: string) {
+  const db = getDb()
+  if (!db) throw new Error("Database is not configured")
   await db.delete(userRole).where(and(eq(userRole.userId, userId), eq(userRole.roleId, roleId)))
 }
 
 export async function isUserBanned(userId: string): Promise<boolean> {
+  const db = getDb()
+  if (!db) return false
   const [userData] = await db
     .select({ banned: user.banned })
     .from(user)
@@ -79,6 +91,8 @@ export async function isUserBanned(userId: string): Promise<boolean> {
 }
 
 export async function getUserPermissionRules(userId: string) {
+  const db = getDb()
+  if (!db) return []
   const roles = await getUserRolesByUserId(userId)
   if (roles.length === 0) return []
 

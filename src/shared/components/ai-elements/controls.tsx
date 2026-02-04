@@ -1,4 +1,4 @@
-"use client";
+;
 
 import { cn } from "@/shared/lib/utils";
 import { Controls as ControlsPrimitive } from "@xyflow/react";

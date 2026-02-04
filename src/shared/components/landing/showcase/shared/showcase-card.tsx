@@ -1,5 +1,3 @@
-"use client"
-
 import { Image } from "@unpic/react"
 import { LocalizedLink } from "@/shared/components/locale/localized-link"
 import { cn } from "@/shared/lib/utils"

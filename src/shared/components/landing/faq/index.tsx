@@ -1,5 +1,3 @@
-"use client"
-
 import { useId } from "react"
 import { useIntlayer } from "react-intlayer"
 import {
@@ -21,7 +19,10 @@ export function Faq() {
   }))
 
   return (
-    <section className="faq-base py-14 md:py-16" aria-labelledby={headingId}>
+    <section
+      className="faq-base py-14 md:py-16"
+      aria-labelledby={headingId}
+    >
       <div className="mx-auto max-w-5xl px-4 md:px-6">
         <div className="mx-auto max-w-xl text-center">
           <h2
@@ -44,7 +45,11 @@ export function Faq() {
             aria-label="Frequently Asked Questions"
           >
             {faqItems.map((item) => (
-              <AccordionItem key={item.id} value={item.id} className="border-dashed">
+              <AccordionItem
+                key={item.id}
+                value={item.id}
+                className="border-dashed"
+              >
                 <AccordionTrigger
                   className={cn("cursor-pointer text-base hover:no-underline")}
                   aria-controls={`faq-content-${item.id}`}
@@ -56,7 +61,10 @@ export function Faq() {
                   id={`faq-content-${item.id}`}
                   aria-labelledby={`faq-trigger-${item.id}`}
                 >
-                  <p id={`faq-answer-${item.id}`} className="text-base">
+                  <p
+                    id={`faq-answer-${item.id}`}
+                    className="text-base"
+                  >
                     {item.answer}
                   </p>
                 </AccordionContent>
