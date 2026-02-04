@@ -1,0 +1,9 @@
+{
+  "title": "文档系统",
+  "pages": [
+    "...docs",
+    "...blog",
+    "...changelog",
+    "...roadmap"
+  ]
+}

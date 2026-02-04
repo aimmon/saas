@@ -1,0 +1,147 @@
+---
+title: 路线图
+description: 使用 JSON 配置与可复用组件渲染看板式路线图，支持多语言
+---
+
+VibeAny 内置了产品路线图功能，以看板的形式展示产品规划，让用户了解即将推出的功能和当前开发进度。
+
+## 目录结构
+
+路线图配置存放在 `content/roadmap/` 目录下：
+
+```bash
+content/roadmap/
+├── config.en.json    # 英文配置
+└── config.zh.json    # 中文配置
+```
+
+## 配置格式
+
+路线图使用 JSON 格式配置，结构如下：
+
+```json title="content/roadmap/config.zh.json"
+{
+  "columns": [
+    {
+      "title": "计划中",
+      "icon": "Calendar",
+      "color": "#60A5FA",
+      "items": [
+        {
+          "title": "功能名称",
+          "description": "功能描述"
+        }
+      ]
+    },
+    {
+      "title": "进行中",
+      "icon": "Loader",
+      "color": "#F59E0B",
+      "items": []
+    },
+    {
+      "title": "已上线",
+      "icon": "Rocket",
+      "color": "#34D399",
+      "items": []
+    }
+  ]
+}
+```
+
+### 配置字段说明
+
+#### Column（列）
+
+| 字段 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `title` | string | 是 | 列标题，如"计划中"、"进行中"、"已上线" |
+| `icon` | string | 是 | Lucide 图标名称 |
+| `color` | string | 是 | 列的主题色，十六进制颜色值 |
+| `items` | array | 是 | 该列下的功能项数组 |
+
+#### Item（功能项）
+
+| 字段 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `title` | string | 是 | 功能名称 |
+| `description` | string | 是 | 功能描述 |
+
+### 可用图标
+
+图标使用 [Lucide Icons](https://lucide.dev/icons/)，常用的图标包括：
+
+- `Calendar` - 日历，用于"计划中"
+- `Loader` - 加载中，用于"进行中"
+- `Rocket` - 火箭，用于"已上线"
+- `CheckCircle` - 勾选，用于"已完成"
+- `Clock` - 时钟，用于"等待中"
+- `Star` - 星星，用于"重点功能"
+
+## 多语言支持
+
+路线图通过不同的配置文件支持多语言：
+
+- `config.en.json` - 英文版本
+- `config.zh.json` - 中文版本
+
+系统会根据当前语言自动加载对应的配置文件。
+
+## 展示效果
+
+路线图页面的路由为 `/roadmap`，会以三列看板的形式展示：
+
+- 响应式布局，移动端自动切换为单列
+- 每列显示图标和颜色标识
+- 功能卡片展示标题和描述
+
+## 自定义列数
+
+默认使用三列布局（计划中、进行中、已上线），你可以根据需要调整列数。只需在 JSON 中添加或删除 `columns` 数组元素即可。
+
+```json title="四列布局示例"
+{
+  "columns": [
+    { "title": "想法收集", "icon": "Lightbulb", "color": "#A78BFA", "items": [] },
+    { "title": "计划中", "icon": "Calendar", "color": "#60A5FA", "items": [] },
+    { "title": "进行中", "icon": "Loader", "color": "#F59E0B", "items": [] },
+    { "title": "已上线", "icon": "Rocket", "color": "#34D399", "items": [] }
+  ]
+}
+```
+
+## 自定义样式
+
+路线图页面使用了以下组件，你可以在对应文件中自定义样式：
+
+- 看板容器：`src/shared/components/roadmap/board.tsx`
+- 列组件：`src/shared/components/roadmap/column.tsx`
+- 卡片组件：`src/shared/components/roadmap/item-card.tsx`
+
+## 开发者
+
+如果你需要深度自定义路线图系统，以下是核心配置文件：
+
+### Source 配置
+
+| 文件 | 说明 |
+| --- | --- |
+| `source.config.ts` | 定义 roadmap collection 的 schema（使用 JSON 元数据） |
+| `src/config/content/roadmap-source.ts` | 路线图数据源的加载逻辑 |
+
+### 样式文件
+
+| 文件 | 说明 |
+| --- | --- |
+| `src/shared/components/roadmap/*.tsx` | 看板 UI 组件样式 |
+
+### 路由文件
+
+| 文件 | 说明 |
+| --- | --- |
+| `src/routes/{-$locale}/_main/_landing/roadmap.tsx` | 路线图页面 |
+
+### Fumadocs 相关文档
+
+- [Collections 配置](https://fumadocs.dev/docs/mdx/collections) - 了解如何定义内容集合
+- [元数据文件](https://fumadocs.dev/docs/mdx/collections#meta-files) - 使用 JSON 配置元数据

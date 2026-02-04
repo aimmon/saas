@@ -1,0 +1,139 @@
+---
+title: 博客
+description: 使用 MDX 编写博客文章，支持分类、标签、作者管理
+---
+
+VibeAny 内置了一套完整的博客系统，基于 [fumadocs-mdx](https://fumadocs.dev/docs/mdx) 构建，让你可以轻松编写和管理博客文章。
+
+## 目录结构
+
+博客相关内容存放在 `content` 目录下：
+
+```bash
+content/
+├── blog/                    # 博客文章
+│   ├── my-first-post.mdx    # 英文文章
+│   └── my-first-post.zh.mdx # 中文文章
+├── authors/                 # 作者信息
+│   └── vibe-any.mdx
+└── categories/              # 文章分类
+    ├── company.mdx
+    └── product.mdx
+```
+
+## 创建博客文章
+
+在 `content/blog/` 目录下新建一个 `.mdx` 文件：
+
+```mdx title="content/blog/hello-world.zh.mdx"
+---
+title: Hello World
+description: 我的第一篇博客文章
+image: /images/blog/hello-world.png  # 封面图（可选）
+date: 2026-02-01T00:00:00Z
+published: true                       # 设为 false 则不显示
+categories: [product]                 # 分类
+author: vibe-any                      # 作者
+tags: [nextjs, tutorial]              # 标签
+---
+
+这里是正文内容，支持所有 MDX 语法...
+```
+
+### Frontmatter 字段说明
+
+| 字段 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `title` | string | 是 | 文章标题 |
+| `description` | string | 否 | 文章描述，用于 SEO 和列表展示 |
+| `image` | string | 否 | 封面图 URL |
+| `date` | string | 是 | 发布日期，ISO 8601 格式 |
+| `published` | boolean | 是 | 是否发布 |
+| `categories` | string[] | 否 | 分类 ID 数组 |
+| `author` | string | 否 | 作者 ID |
+| `tags` | string[] | 否 | 标签数组 |
+
+## 多语言支持
+
+博客支持多语言，通过文件后缀区分：
+
+- `my-post.mdx` - 英文版本（默认）
+- `my-post.zh.mdx` - 中文版本
+
+系统会根据当前语言自动加载对应版本的文章。
+
+## 管理作者
+
+在 `content/authors/` 目录下创建作者文件：
+
+```mdx title="content/authors/john.mdx"
+---
+name: John Doe
+avatar: /images/authors/john.png
+twitter: johndoe
+---
+
+这里可以写作者简介...
+```
+
+然后在博客文章中通过 `author: john` 引用该作者。
+
+## 管理分类
+
+在 `content/categories/` 目录下创建分类文件：
+
+```mdx title="content/categories/tutorial.mdx"
+---
+title: 教程
+description: 技术教程文章
+---
+```
+
+然后在博客文章中通过 `categories: [tutorial]` 引用该分类。
+
+## 访问博客
+
+博客页面的路由为：
+
+- 列表页：`/blog`
+- 详情页：`/blog/[slug]`
+
+用户可以通过分类筛选文章，点击文章卡片进入详情页阅读全文。
+
+## 自定义样式
+
+博客页面使用了以下组件，你可以在对应文件中自定义样式：
+
+- 博客列表：`src/shared/components/blog/blog-grid.tsx`
+- 博客卡片：`src/shared/components/blog/blog-card.tsx`
+- 文章内容：`src/shared/components/blog/custom-mdx-content.tsx`
+
+## 开发者
+
+如果你需要深度自定义博客系统，以下是核心配置文件：
+
+### Source 配置
+
+| 文件 | 说明 |
+| --- | --- |
+| `source.config.ts` | 定义 blog collection 的 schema 和配置 |
+| `src/config/content/blog-source.ts` | 博客数据源的加载逻辑和辅助函数 |
+
+### 样式文件
+
+| 文件 | 说明 |
+| --- | --- |
+| `src/config/style/docs.css` | 博客 MDX 内容的基础样式（共用文档样式） |
+| `src/shared/components/blog/*.tsx` | 博客 UI 组件样式 |
+
+### 路由文件
+
+| 文件 | 说明 |
+| --- | --- |
+| `src/routes/{-$locale}/_main/_landing/blog/index.tsx` | 博客列表页 |
+| `src/routes/{-$locale}/_main/_landing/blog/$slug.tsx` | 博客详情页 |
+
+### Fumadocs 相关文档
+
+- [Collections 配置](https://fumadocs.dev/docs/mdx/collections) - 了解如何定义内容集合
+- [MDX 组件](https://fumadocs.dev/docs/ui/mdx) - 可用的 MDX 组件

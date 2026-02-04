@@ -1,0 +1,296 @@
+---
+title: 文档站点
+description: 基于 Fumadocs 构建的文档系统，支持 MDX、多语言、全文搜索
+---
+
+VibeAny 使用 [Fumadocs](https://fumadocs.dev/) 构建文档站点，这是一个专为 Next.js 设计的现代化文档框架，提供了出色的开发体验和用户体验。
+
+## 为什么选择 Fumadocs
+
+- **基于 MDX** - 在 Markdown 中使用 React 组件
+- **多语言支持** - 内置国际化，轻松管理多语言文档
+- **全文搜索** - 内置搜索功能，无需额外配置
+- **自动导航** - 根据文件结构自动生成侧边栏
+- **代码高亮** - 内置 Shiki 语法高亮
+- **TypeScript 优先** - 完整的类型支持
+
+## 目录结构
+
+文档内容存放在 `content/docs/` 目录下：
+
+```bash
+content/docs/
+├── meta.json              # 英文导航配置
+├── meta.zh.json           # 中文导航配置
+├── index.mdx              # 文档首页（英文）
+├── index.zh.mdx           # 文档首页（中文）
+├── introduction/          # 章节目录
+│   ├── meta.json          # 章节导航
+│   ├── quick-start.mdx
+│   └── quick-start.zh.mdx
+└── customize/
+    ├── meta.json
+    └── ...
+```
+
+## 创建文档页面
+
+### 1. 创建 MDX 文件
+
+在 `content/docs/` 目录下创建 `.mdx` 文件：
+
+```mdx title="content/docs/my-page.zh.mdx"
+---
+title: 页面标题
+description: 页面描述，用于 SEO
+---
+
+## 第一节
+
+这里是文档内容，支持所有 Markdown 语法...
+
+### 代码示例
+
+\`\`\`tsx title="example.tsx"
+export function Hello() {
+  return <div>Hello World</div>
+}
+\`\`\`
+```
+
+### 2. Frontmatter 字段
+
+| 字段 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `title` | string | 是 | 页面标题 |
+| `description` | string | 否 | 页面描述，用于 SEO |
+| `icon` | string | 否 | 侧边栏图标 |
+
+### 3. 多语言文件
+
+通过文件后缀区分语言版本：
+
+- `quick-start.mdx` - 英文版本（默认）
+- `quick-start.zh.mdx` - 中文版本
+
+## 配置导航
+
+使用 `meta.json` 文件配置侧边栏导航：
+
+```json title="content/docs/meta.json"
+{
+  "title": "Documentation",
+  "root": true,
+  "pages": [
+    "---Introduction---",
+    "index",
+    "...introduction",
+    "---Guides---",
+    "...customize",
+    "...deployment"
+  ]
+}
+```
+
+### 导航语法
+
+| 语法 | 说明 | 示例 |
+| --- | --- | --- |
+| `"page-name"` | 单个页面 | `"quick-start"` |
+| `"...folder"` | 展开文件夹内所有页面 | `"...introduction"` |
+| `"---Title---"` | 分隔符标题 | `"---入门指南---"` |
+| `"[text](url)"` | 外部链接 | `"[GitHub](https://github.com)"` |
+
+### 多语言导航
+
+创建 `meta.zh.json` 覆盖中文导航标题：
+
+```json title="content/docs/meta.zh.json"
+{
+  "title": "文档",
+  "root": true,
+  "pages": [
+    "---入门指南---",
+    "index",
+    "...introduction",
+    "---进阶指南---",
+    "...customize",
+    "...deployment"
+  ]
+}
+```
+
+## 创建章节
+
+为了更好地组织文档，可以创建章节目录：
+
+```bash
+# 1. 创建章节目录
+mkdir content/docs/my-section
+
+# 2. 创建章节导航配置
+```
+
+```json title="content/docs/my-section/meta.json"
+{
+  "title": "My Section",
+  "pages": ["overview", "getting-started", "advanced"]
+}
+```
+
+```json title="content/docs/my-section/meta.zh.json"
+{
+  "title": "我的章节",
+  "pages": ["overview", "getting-started", "advanced"]
+}
+```
+
+## 使用 MDX 组件
+
+Fumadocs 提供了丰富的内置组件，你可以直接在 MDX 中使用：
+
+### 步骤组件
+
+```mdx
+<div className="fd-steps">
+  <div className="fd-step">
+    ### 第一步
+    执行某个操作...
+  </div>
+  <div className="fd-step">
+    ### 第二步
+    执行下一个操作...
+  </div>
+</div>
+```
+
+### 代码块标签页
+
+````mdx
+```bash tab="pnpm"
+pnpm install
+```
+
+```bash tab="npm"
+npm install
+```
+
+```bash tab="yarn"
+yarn
+```
+````
+
+### 提示框
+
+```mdx
+> 这是一个普通提示
+
+<Callout type="info">
+  这是一个信息提示
+</Callout>
+
+<Callout type="warning">
+  这是一个警告提示
+</Callout>
+```
+
+## 自定义 MDX 组件
+
+你可以在 `src/shared/components/docs/mdx-components.tsx` 中添加自定义组件：
+
+```tsx title="src/shared/components/docs/mdx-components.tsx"
+import { type MDXComponents } from "mdx/types"
+
+export function getMDXComponents(): MDXComponents {
+  return {
+    // 自定义组件
+    MyComponent: (props) => <div {...props} />,
+
+    // 覆盖默认组件
+    img: (props) => <ImageZoom {...props} />,
+  }
+}
+```
+
+然后在 MDX 中直接使用：
+
+```mdx
+<MyComponent>
+  自定义内容
+</MyComponent>
+```
+
+## 访问文档
+
+文档页面的路由为：
+
+- 首页：`/docs`
+- 章节页：`/docs/[...slug]`
+
+例如：`/docs/introduction/quick-start`
+
+## 文档搜索
+
+Fumadocs 内置了全文搜索功能，用户可以通过顶部搜索框或快捷键 `Ctrl/Cmd + K` 快速搜索文档内容。
+
+## 自定义主题
+
+文档站点的样式可以在以下文件中自定义：
+
+- 主题变量：`src/config/style/docs.css`
+- 布局组件：`src/routes/{-$locale}/docs/route.tsx`
+- MDX 组件：`src/shared/components/docs/mdx-components.tsx`
+
+## 开发者
+
+如果你需要深度自定义文档系统，以下是核心配置文件：
+
+### Source 配置
+
+| 文件 | 说明 |
+| --- | --- |
+| `source.config.ts` | 定义 docs collection 的 schema 和配置 |
+| `src/config/content/source.ts` | 文档数据源的加载逻辑，配置 baseUrl 和 i18n |
+
+### 样式文件
+
+| 文件 | 说明 |
+| --- | --- |
+| `src/config/style/docs.css` | 文档页面的主题样式和 CSS 变量 |
+| `src/shared/components/docs/mdx-components.tsx` | 自定义 MDX 组件 |
+
+### 路由文件
+
+| 文件 | 说明 |
+| --- | --- |
+| `src/routes/{-$locale}/docs/route.tsx` | 文档布局组件 |
+| `src/routes/{-$locale}/docs/$.tsx` | 文档动态路由 |
+
+### 配置示例
+
+修改 `source.config.ts` 添加自定义 frontmatter 字段：
+
+```ts title="source.config.ts"
+import { defineDocs } from "fumadocs-mdx/config"
+import { z } from "zod"
+
+export const docs = defineDocs({
+  dir: "content/docs",
+  docs: {
+    schema: {
+      // 添加自定义字段
+      author: z.string().optional(),
+      updated: z.date().optional(),
+    },
+  },
+})
+```
+
+### Fumadocs 相关文档
+
+- [快速开始](https://fumadocs.dev/docs/ui/quick-start) - Fumadocs UI 入门
+- [页面配置](https://fumadocs.dev/docs/ui/page-configurations) - 页面和导航配置
+- [MDX 组件](https://fumadocs.dev/docs/ui/mdx) - 内置 MDX 组件
+- [搜索配置](https://fumadocs.dev/docs/ui/search) - 全文搜索设置
+- [主题定制](https://fumadocs.dev/docs/ui/theme) - 主题和样式自定义
+- [MDX 官方文档](https://mdxjs.com/) - 了解 MDX 语法

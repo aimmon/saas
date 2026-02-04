@@ -1,0 +1,143 @@
+---
+title: 更新日志
+description: 基于 MDX 的时间线式更新日志，记录产品迭代历程
+---
+
+VibeAny 内置了更新日志（Changelog）功能，帮助你以时间线的形式展示产品更新记录，让用户了解最新功能和改进。
+
+## 目录结构
+
+更新日志存放在 `content/changelog/` 目录下：
+
+```bash
+content/changelog/
+├── initial-release.mdx      # 英文版本
+├── initial-release.zh.mdx   # 中文版本
+├── v1.1.0.mdx
+└── v1.1.0.zh.mdx
+```
+
+## 创建更新日志
+
+在 `content/changelog/` 目录下新建一个 `.mdx` 文件：
+
+```mdx title="content/changelog/v1.1.0.zh.mdx"
+---
+title: 新增暗黑模式
+date: 2026-02-01
+version: v1.1.0
+published: true
+tags:
+  - 功能
+  - 界面
+---
+
+我们很高兴地宣布 v1.1.0 版本发布！
+
+## 新功能
+
+- 新增暗黑模式，支持系统主题跟随
+- 优化移动端响应式布局
+
+## Bug 修复
+
+- 修复登录页面在 Safari 浏览器下的样式问题
+- 修复积分记录分页不正确的问题
+
+## 改进
+
+- 提升页面加载速度
+- 优化 SEO 元数据
+```
+
+### Frontmatter 字段说明
+
+| 字段 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `title` | string | 是 | 更新标题 |
+| `date` | string | 是 | 发布日期，格式 `YYYY-MM-DD` |
+| `version` | string | 否 | 版本号，如 `v1.0.0` |
+| `published` | boolean | 是 | 是否发布 |
+| `tags` | string[] | 否 | 标签数组，用于分类（如：功能、修复、改进） |
+
+## 多语言支持
+
+更新日志支持多语言，通过文件后缀区分：
+
+- `v1.1.0.mdx` - 英文版本（默认）
+- `v1.1.0.zh.mdx` - 中文版本
+
+## 展示效果
+
+更新日志页面的路由为 `/changelog`，会以时间线的形式展示所有已发布的更新记录：
+
+- 按日期倒序排列，最新的更新在最上方
+- 显示版本号标签
+- 支持 MDX 富文本内容
+- 响应式布局，移动端友好
+
+## 写作建议
+
+为了让更新日志更清晰易读，建议遵循以下规范：
+
+### 使用语义化分类
+
+```markdown
+## 新功能
+- 新增 xxx 功能
+
+## Bug 修复
+- 修复 xxx 问题
+
+## 改进
+- 优化 xxx 性能
+
+## 破坏性变更
+- xxx API 已废弃，请使用 yyy 替代
+```
+
+### 面向用户描述
+
+用用户能理解的语言描述改动，而不是技术术语：
+
+```markdown
+❌ 重构了 AuthService 的依赖注入逻辑
+✅ 优化了登录流程，现在登录速度提升 50%
+```
+
+## 自定义样式
+
+更新日志页面使用了以下组件，你可以在对应文件中自定义样式：
+
+- 时间线容器：`src/shared/components/changelog/timeline.tsx`
+- 时间线项：`src/shared/components/changelog/timeline-item.tsx`
+- MDX 扩展：`src/shared/components/changelog/mdx-extras.tsx`
+
+## 开发者
+
+如果你需要深度自定义更新日志系统，以下是核心配置文件：
+
+### Source 配置
+
+| 文件 | 说明 |
+| --- | --- |
+| `source.config.ts` | 定义 changelog collection 的 schema 和配置 |
+| `src/config/content/changelog-source.ts` | 更新日志数据源的加载逻辑 |
+
+### 样式文件
+
+| 文件 | 说明 |
+| --- | --- |
+| `src/config/style/docs.css` | MDX 内容的基础样式 |
+| `src/shared/components/changelog/*.tsx` | 时间线 UI 组件样式 |
+
+### 路由文件
+
+| 文件 | 说明 |
+| --- | --- |
+| `src/routes/{-$locale}/_main/_landing/changelog.tsx` | 更新日志页面 |
+
+### Fumadocs 相关文档
+
+- [Collections 配置](https://fumadocs.dev/docs/mdx/collections) - 了解如何定义内容集合
+- [MDX 组件](https://fumadocs.dev/docs/ui/mdx) - 可用的 MDX 组件
