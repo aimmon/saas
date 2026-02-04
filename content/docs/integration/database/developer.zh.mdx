@@ -1,0 +1,116 @@
+---
+title: 开发者
+description: 数据库开发指南
+---
+
+本指南介绍项目的数据库架构设计和开发规范。项目使用 [Drizzle ORM](https://orm.drizzle.team/) 作为数据库工具。
+
+## 数据库架构
+
+所有 Schema 文件位于 `src/db/` 目录：
+
+| 文件 | 说明 |
+| --- | --- |
+| `auth.schema.ts` | 用户、会话、账户、验证码 |
+| `subscription.schema.ts` | 订阅管理 |
+| `payment.schema.ts` | 支付记录 |
+| `order.schema.ts` | 订单管理 |
+| `credit.schema.ts` | 积分系统 |
+| `rbac.schema.ts` | 权限控制（角色、权限） |
+| `config.schema.ts` | 系统配置 |
+
+## 使用数据库
+
+从 `@/db` 导入 `db` 实例和 Schema：
+
+```ts
+import { db, user } from "@/db"
+import { eq } from "drizzle-orm"
+
+// 查询
+const users = await db.select().from(user)
+
+// 条件查询
+const result = await db.select().from(user).where(eq(user.id, "xxx"))
+
+// 插入
+await db.insert(user).values({ id: "xxx", name: "test", email: "test@example.com" })
+
+// 更新
+await db.update(user).set({ name: "new name" }).where(eq(user.id, "xxx"))
+
+// 删除
+await db.delete(user).where(eq(user.id, "xxx"))
+```
+
+## 类型推导
+
+数据库表的类型应该在 `src/shared/types/` 中从 Schema 推导，而不是手动定义：
+
+```ts
+import type { user } from "@/db/auth.schema"
+
+// 从表推导完整类型
+export type User = typeof user.$inferSelect
+
+// 从枚举推导类型
+import type { paymentStatusEnum } from "@/db/payment.schema"
+export type PaymentStatus = (typeof paymentStatusEnum.enumValues)[number]
+```
+
+## 常用命令
+
+```bash
+# 生成迁移文件
+pnpm db:generate
+
+# 执行迁移
+pnpm db:migrate
+
+# 推送 Schema 变更（开发环境）
+pnpm db:push
+
+# 从数据库拉取 Schema
+pnpm db:pull
+
+# 打开 Drizzle Studio
+pnpm db:studio
+```
+
+## 新增表
+
+<div className="fd-steps">
+  <div className="fd-step">
+    ### 创建 Schema 文件
+    在 `src/db/` 目录下创建新的 Schema 文件：
+    ```ts title="src/db/example.schema.ts"
+    import { pgTable, text, timestamp } from "drizzle-orm/pg-core"
+
+    export const example = pgTable("example", {
+      id: text("id").primaryKey(),
+      name: text("name").notNull(),
+      createdAt: timestamp("created_at").defaultNow().notNull(),
+    })
+    ```
+  </div>
+  <div className="fd-step">
+    ### 导出 Schema
+    在 `src/db/index.ts` 中导出：
+    ```ts
+    export * from "./example.schema"
+    import * as exampleSchema from "./example.schema"
+
+    const schema = {
+      // ... 其他 schema
+      ...exampleSchema,
+    }
+    ```
+  </div>
+  <div className="fd-step">
+    ### 生成迁移
+    运行命令生成迁移文件：
+    ```bash
+    pnpm db:generate
+    ```
+  </div>
+</div>

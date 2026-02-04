@@ -1,0 +1,78 @@
+---
+title: Supabase
+description: 开源 Firebase 替代品，PostgreSQL 数据库 + 认证 + 存储 + 实时订阅
+---
+
+[Supabase](https://supabase.com/) 基于 PostgreSQL，除了数据库还提供认证、文件存储、Edge Functions 等功能。免费版提供 500 MB 数据库、1 GB 文件存储，最多 2 个活跃项目（1 周不活跃会暂停）。
+
+## 快速开始
+
+<div className="fd-steps">
+  <div className="fd-step">
+    ### 创建项目
+    打开 [Supabase Dashboard](https://supabase.com/dashboard)，点击 `New Project`。
+    <Callout type="warn" title="提示">
+    记住你设置的数据库密码，后面连接时需要用到。
+    </Callout>
+    ![Supabase Create Project](/docs/integration/database/supabase-create.webp)
+  </div>
+  <div className="fd-step">
+    ### 获取连接字符串
+    项目创建后，点击顶部的 `Connect` 按钮。
+    ![Supabase Project Link](/docs/integration/database/supabase-connect.webp)
+
+    选择 `ORMs` → `Drizzle`，复制 `.env` 格式的连接字符串。把 `[YOUR-PASSWORD]` 替换成你设置的密码。
+    ![Supabase Project Link](/docs/integration/database/supabase-env.webp)
+  </div>
+  <div className="fd-step">
+    ### 配置环境变量
+    将连接字符串粘贴到 `.env` 文件：
+    ```bash
+    DATABASE_URL="postgresql://postgres.xxx:password@aws-0-region.pooler.supabase.com:6543/postgres"
+    ```
+  </div>
+  <div className="fd-step">
+    ### 执行迁移
+    运行以下命令生成并应用数据库迁移：
+
+    ```bash tab="pnpm"
+    pnpm db:generate
+    pnpm db:migrate
+    ```
+    ```bash tab="npm"
+    npm run db:generate
+    npm run db:migrate
+    ```
+    ```bash tab="bun"
+    bun db:generate
+    bun db:migrate
+    ```
+  </div>
+  <div className="fd-step">
+    ### 管理数据库
+    使用 Drizzle Studio 查看和编辑数据：
+    ```bash tab="pnpm"
+    pnpm db:studio
+    ```
+    ```bash tab="npm"
+    npm run db:studio
+    ```
+    ```bash tab="bun"
+    bun db:studio
+    ```
+  </div>
+</div>
+
+## 使用独立 Schema
+
+Supabase 默认使用 `public` Schema，里面有 Supabase 自己的系统表（auth、storage 等）。创建独立 Schema 可以把应用数据和系统数据分开，方便管理。
+
+在 Table Editor 页面创建新 Schema：
+
+![Supabase Schema](/docs/integration/database/supabase-schema-create.webp)
+
+然后在连接字符串中指定 Schema：
+
+```bash
+DATABASE_URL="postgresql://postgres.xxx:password@aws-0-region.pooler.supabase.com:6543/postgres?schema=your-schema-name"
+```

@@ -1,0 +1,61 @@
+---
+title: Neon
+description: Serverless PostgreSQL 数据库，按用量计费，自动伸缩
+---
+
+[Neon](https://neon.tech/) 是 Serverless PostgreSQL 服务。数据库在无请求时自动休眠，按实际用量计费。免费版提供每项目 0.5 GB 存储、100 CU-hours 计算时间，最多可创建 10 个项目。
+
+## 快速开始
+
+<div className="fd-steps">
+  <div className="fd-step">
+    ### 创建项目
+    访问 [Neon Console](https://console.neon.tech/)，点击 `New Project` 创建项目。选择离你最近的区域。
+    ![Neon Create Project](/docs/integration/database/neno-create.webp)
+  </div>
+  <div className="fd-step">
+    ### 获取连接字符串
+    项目创建后，进入 Dashboard，点击 `Connection string` 复制连接地址。
+    ![Neon Connection String](/docs/integration/database/neno-connect.webp)
+
+    选择 `Pooled connection`，复制以 `postgresql://` 开头的字符串。
+    ![Neon Pooled Connection](/docs/integration/database/neno-env.webp)
+  </div>
+  <div className="fd-step">
+    ### 配置环境变量
+    将连接字符串粘贴到 `.env` 文件：
+    ```bash
+    DATABASE_URL="postgresql://username:password@ep-xxx.region.aws.neon.tech/neondb?sslmode=require"
+    ```
+  </div>
+  <div className="fd-step">
+    ### 执行迁移
+    运行以下命令生成并应用数据库迁移：
+
+    ```bash tab="pnpm"
+    pnpm db:generate
+    pnpm db:migrate
+    ```
+    ```bash tab="npm"
+    npm run db:generate
+    npm run db:migrate
+    ```
+    ```bash tab="bun"
+    bun db:generate
+    bun db:migrate
+    ```
+  </div>
+  <div className="fd-step">
+    ### 管理数据库
+    使用 Drizzle Studio 查看和编辑数据：
+    ```bash tab="pnpm"
+    pnpm db:studio
+    ```
+    ```bash tab="npm"
+    npm run db:studio
+    ```
+    ```bash tab="bun"
+    bun db:studio
+    ```
+  </div>
+</div>

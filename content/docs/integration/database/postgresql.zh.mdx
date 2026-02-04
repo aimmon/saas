@@ -1,0 +1,104 @@
+---
+title: PostgreSQL
+description: 使用 Docker 在本地或云端运行 PostgreSQL 数据库
+---
+
+本地开发时，推荐使用 Docker 运行 PostgreSQL。无需注册云服务，数据完全在本地，启动快速。
+
+## 前置要求
+
+确保已安装 [Docker Desktop](https://www.docker.com/products/docker-desktop/) 或 [OrbStack](https://orbstack.dev/)（macOS 推荐）。
+
+## 快速开始
+
+<div className="fd-steps">
+  <div className="fd-step">
+    ### 启动 PostgreSQL
+    运行以下命令启动 PostgreSQL 容器：
+    ```bash
+    docker run -d \
+      --name postgres-dev \
+      -e POSTGRES_USER=postgres \
+      -e POSTGRES_PASSWORD=postgres \
+      -e POSTGRES_DB=dev \
+      -p 5432:5432 \
+      postgres:17
+    ```
+    <Callout type="info" title="说明">
+    首次运行会自动下载 PostgreSQL 镜像，可能需要几分钟。
+    </Callout>
+  </div>
+  <div className="fd-step">
+    ### 配置环境变量
+    将连接字符串添加到 `.env` 文件：
+    ```bash
+    DATABASE_URL="postgresql://postgres:postgres@localhost:5432/dev"
+    ```
+  </div>
+  <div className="fd-step">
+    ### 执行迁移
+    运行以下命令生成并应用数据库迁移：
+
+    ```bash tab="pnpm"
+    pnpm db:generate
+    pnpm db:migrate
+    ```
+    ```bash tab="npm"
+    npm run db:generate
+    npm run db:migrate
+    ```
+    ```bash tab="bun"
+    bun db:generate
+    bun db:migrate
+    ```
+  </div>
+  <div className="fd-step">
+    ### 管理数据库
+    使用 Drizzle Studio 查看和编辑数据：
+    ```bash tab="pnpm"
+    pnpm db:studio
+    ```
+    ```bash tab="npm"
+    npm run db:studio
+    ```
+    ```bash tab="bun"
+    bun db:studio
+    ```
+  </div>
+</div>
+
+## 常用命令
+
+```bash
+# 停止容器
+docker stop postgres-dev
+
+# 启动已存在的容器
+docker start postgres-dev
+
+# 删除容器（数据会丢失）
+docker rm -f postgres-dev
+
+# 查看容器日志
+docker logs postgres-dev
+
+# 进入 psql 命令行
+docker exec -it postgres-dev psql -U postgres -d dev
+```
+
+## 数据持久化
+
+默认情况下，删除容器会丢失数据。如需持久化，挂载数据卷：
+
+```bash
+docker run -d \
+  --name postgres-dev \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=dev \
+  -p 5432:5432 \
+  -v postgres-data:/var/lib/postgresql/data \
+  postgres:17
+```
+
+数据卷 `postgres-data` 会在本地保存数据库文件，即使删除容器也不会丢失。
