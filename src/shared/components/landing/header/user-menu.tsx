@@ -19,7 +19,7 @@ import { UserDashboard } from "@/shared/components/user-dashboard"
 import { useGlobalContext } from "@/shared/context/global.context"
 import { signOut } from "@/shared/lib/auth/auth-client"
 
-const routeApi = getRouteApi("/{-$locale}/_main")
+const rootRouteApi = getRouteApi("__root__")
 
 function getInitials(name: string | undefined | null) {
   if (!name) return "U"
@@ -34,11 +34,11 @@ function getInitials(name: string | undefined | null) {
 export function UserMenu() {
   const { userMenu } = useIntlayer("auth")
   const { userInfo, credits, config, isLoadingUserInfo } = useGlobalContext()
-  const { isAuthEnabled } = routeApi.useLoaderData()
+  const { isAuthEnabled } = rootRouteApi.useLoaderData()
   const creditEnabled = config?.public_credit_enable ?? false
   const [isOpenUserDashboard, setIsOpenUserDashboard] = useState(false)
   const [defaultPanel, setDefaultPanel] = useState<string | undefined>()
-
+  console.log("isAuthEnabled", isAuthEnabled)
   if (!isAuthEnabled) {
     return null
   }

@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
 import AdminSidebar from "@/shared/components/sidebar/admin-sidebar"
 import { SidebarProvider, SidebarTrigger } from "@/shared/components/ui/sidebar"
-import { isAuthEnabled } from "@/shared/lib/auth/auth-config"
+import { getIsAuthEnabled } from "@/shared/lib/auth/auth-config"
 import { pageAdminMiddleware } from "@/shared/middleware/auth.middleware"
 
 export const Route = createFileRoute("/{-$locale}/_main/admin")({
@@ -11,6 +11,7 @@ export const Route = createFileRoute("/{-$locale}/_main/admin")({
     middleware: [pageAdminMiddleware],
   },
   beforeLoad: async () => {
+    const isAuthEnabled = await getIsAuthEnabled()
     if (!isAuthEnabled) {
       throw redirect({
         to: "/{-$locale}/404",

@@ -9,12 +9,16 @@ import appCss from "@/config/style/global.css?url"
 import TanStackQueryDevtools from "@/integrations/tanstack-query/devtools"
 import { ErrorToaster } from "@/shared/components/error-toaster"
 import { Toaster } from "@/shared/components/ui/sonner"
+import { getIsAuthEnabled } from "@/shared/lib/auth/auth-config"
 
 interface MyRouterContext {
   queryClient: QueryClient
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
+  loader: async () => ({
+    isAuthEnabled: await getIsAuthEnabled(),
+  }),
   head: () => ({
     meta: [
       {

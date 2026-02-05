@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router"
-import { isAuthEnabled } from "@/shared/lib/auth/auth-config"
+import { isAuthConfigured } from "@/shared/lib/auth/auth-config"
 import { auth } from "@/shared/lib/auth/auth-server"
 
 const notConfiguredResponse = () =>
@@ -12,11 +12,11 @@ export const Route = createFileRoute("/api/auth/$")({
   server: {
     handlers: {
       GET: async ({ request }: { request: Request }) => {
-        if (!isAuthEnabled || !auth) return notConfiguredResponse()
+        if (!isAuthConfigured || !auth) return notConfiguredResponse()
         return await auth.handler(request)
       },
       POST: async ({ request }: { request: Request }) => {
-        if (!isAuthEnabled || !auth) return notConfiguredResponse()
+        if (!isAuthConfigured || !auth) return notConfiguredResponse()
         return await auth.handler(request)
       },
     },

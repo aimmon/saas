@@ -12,12 +12,13 @@ import { Input } from "@/shared/components/ui/input"
 import { Label } from "@/shared/components/ui/label"
 import { useAuthMutations } from "@/shared/hooks/use-auth-mutations"
 import { authClient } from "@/shared/lib/auth/auth-client"
-import { isAuthEnabled } from "@/shared/lib/auth/auth-config"
+import { getIsAuthEnabled } from "@/shared/lib/auth/auth-config"
 
 export const Route = createFileRoute("/{-$locale}/login/")({
   component: RouteComponent,
   ssr: false,
   beforeLoad: async () => {
+    const isAuthEnabled = await getIsAuthEnabled()
     if (!isAuthEnabled) {
       throw redirect({
         to: "/{-$locale}/404",

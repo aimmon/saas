@@ -4,7 +4,7 @@ import { getRequestHeaders } from "@tanstack/react-start/server"
 import { auth } from "@/shared/lib/auth/auth-server"
 import { Resp } from "@/shared/lib/tools/response"
 import { isUserAdmin } from "@/shared/model/rabc.model"
-import { isAuthEnabled } from "../lib/auth/auth-config"
+import { isAuthConfigured } from "../lib/auth/auth-config"
 
 type Session = typeof auth extends null
   ? null
@@ -14,7 +14,7 @@ type Session = typeof auth extends null
  * session middleware, pass session to handler context (can be null)
  */
 export const sessionMiddleware = createMiddleware().server(async ({ next }) => {
-  if (!isAuthEnabled || !auth) {
+  if (!isAuthConfigured || !auth) {
     return await next({ context: { session: null } })
   }
   const headers = getRequestHeaders()
@@ -29,7 +29,7 @@ export const sessionMiddleware = createMiddleware().server(async ({ next }) => {
 export const apiAuthMiddleware = createMiddleware()
   .middleware([sessionMiddleware])
   .server(async ({ next, context }) => {
-    if (!isAuthEnabled) {
+    if (!isAuthConfigured) {
       return Resp.error("Authentication is not configured", 503)
     }
     if (!context.session) {
@@ -45,7 +45,7 @@ export const apiAuthMiddleware = createMiddleware()
 export const pageAuthMiddleware = createMiddleware()
   .middleware([sessionMiddleware])
   .server(async ({ next, context }) => {
-    if (!isAuthEnabled) {
+    if (!isAuthConfigured) {
       throw redirect({ to: "/{-$locale}/404" })
     }
     if (!context.session) {
@@ -61,7 +61,7 @@ export const pageAuthMiddleware = createMiddleware()
 export const apiAdminMiddleware = createMiddleware()
   .middleware([sessionMiddleware])
   .server(async ({ next, context }) => {
-    if (!isAuthEnabled) {
+    if (!isAuthConfigured) {
       return Resp.error("Authentication is not configured", 503)
     }
     if (!context.session) {
@@ -83,7 +83,7 @@ export const apiAdminMiddleware = createMiddleware()
 export const pageAdminMiddleware = createMiddleware()
   .middleware([sessionMiddleware])
   .server(async ({ next, context }) => {
-    if (!isAuthEnabled) {
+    if (!isAuthConfigured) {
       throw redirect({ to: "/{-$locale}/404" })
     }
     if (!context.session) {

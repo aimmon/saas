@@ -2,3 +2,40 @@
 title: Stripe
 description: Stripe 支付
 ---
+
+## 快速开始
+<div className="fd-steps">
+  <div className="fd-step">
+    ### 创建 Stripe 账户
+    访问 [Stripe 官网](https://stripe.com/) 注册一个账号。
+  </div>
+  <div className="fd-step">
+    ### 创建 Stripe 密钥
+    1. 进入 [Stripe Dashboard](https://dashboard.stripe.com/)
+    2. 点击 `Developers` → `API Keys`
+    ![Stripe API Keys](/docs/integration/payment/stripe-developers.webp)
+    3. 创建 API 密钥
+    ![Stripe Create API ](/docs/integration/payment/stripe-create-key.webp)
+    4. 复制 API 密钥，粘贴到 `.env` 文件中：
+    ![Stripe Create API ](/docs/integration/payment/stripe-api.webp)
+    ```bash
+    VITE_STRIPE_PUBLISHABLE_KEY=pk_test_1234567890
+    STRIPE_SECRET_KEY=sk_test_1234567890
+    ```
+    或者在后台配置面板中配置：
+    ![Stripe API Keys](/docs/integration/payment/stripe-backstage-api.webp)
+    <Callout type="warn" title="注意">
+     `STRIPE_SECRET_KEY` 是敏感信息，请勿泄露。
+    </Callout>
+    5. 创建 Webhook 密钥
+    ![Stripe Create Webhook ](/docs/integration/payment/stripe-create-webhook.webp)
+    ```bash
+    STRIPE_WEBHOOK_SECRET=whsec_1234567890
+    ```
+  </div>
+</div>
+
+
+## 沙盒模式
+Stripe 提供了沙盒模式，可以在本地测试支付流程，避免使用真实信用卡信息。
+![Stripe Sandbox](/docs/integration/payment/stripe-sandbox.webp)

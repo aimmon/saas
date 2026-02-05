@@ -6,16 +6,14 @@ import { getTranslationContent, type Locale } from "intlayer"
 import { verificationEmailTranslations } from "@/config/locale/auth.content"
 import { getDb } from "@/db"
 import { sendEmail } from "@/shared/lib/email/send-email"
-import { isAuthEnabled } from "./auth-config"
+import { isAuthConfigured } from "./auth-config"
 
 const isCaptchaEnabled =
   process.env.TURNSTILE_CAPTCHA_ENABLED === "true" && !!process.env.TURNSTILE_SECRET_KEY
 
-const isGitHubOAuthEnabled =
-  !!process.env.GITHUB_CLIENT_ID && !!process.env.GITHUB_CLIENT_SECRET
+const isGitHubOAuthEnabled = !!process.env.GITHUB_CLIENT_ID && !!process.env.GITHUB_CLIENT_SECRET
 
-const isGoogleOAuthEnabled =
-  !!process.env.GOOGLE_CLIENT_ID && !!process.env.GOOGLE_CLIENT_SECRET
+const isGoogleOAuthEnabled = !!process.env.GOOGLE_CLIENT_ID && !!process.env.GOOGLE_CLIENT_SECRET
 
 function getLocaleFromUrl(url: string): string {
   try {
@@ -32,7 +30,7 @@ function getLocaleFromUrl(url: string): string {
 }
 
 function createAuth() {
-  if (!isAuthEnabled) {
+  if (!isAuthConfigured) {
     return null
   }
 
