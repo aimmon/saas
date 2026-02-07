@@ -15,51 +15,25 @@ const program = new Command();
 const DEFAULT_PERMISSIONS = [
   // User Management
   { code: 'user:read', resource: 'user', action: 'read', title: 'View Users' },
-  { code: 'user:create', resource: 'user', action: 'create', title: 'Create Users' },
-  { code: 'user:update', resource: 'user', action: 'update', title: 'Edit Users' },
-  { code: 'user:delete', resource: 'user', action: 'delete', title: 'Delete Users' },
-
-  // Post Management
-  { code: 'post:read', resource: 'post', action: 'read', title: 'View Posts' },
-  { code: 'post:create', resource: 'post', action: 'create', title: 'Create Posts' },
-  { code: 'post:update', resource: 'post', action: 'update', title: 'Edit Posts' },
-  { code: 'post:delete', resource: 'post', action: 'delete', title: 'Delete Posts' },
-
-  // Category Management
-  { code: 'category:read', resource: 'category', action: 'read', title: 'View Categories' },
-  { code: 'category:create', resource: 'category', action: 'create', title: 'Create Categories' },
-  { code: 'category:update', resource: 'category', action: 'update', title: 'Edit Categories' },
-  { code: 'category:delete', resource: 'category', action: 'delete', title: 'Delete Categories' },
+  { code: 'user:ban', resource: 'user', action: 'ban', title: 'Ban/Unban Users' },
+  { code: 'user:grant-credit', resource: 'user', action: 'grant-credit', title: 'Grant Credits to Users' },
+  { code: 'user:manage-role', resource: 'user', action: 'manage-role', title: 'Manage User Roles' },
 
   // Order Management
   { code: 'order:read', resource: 'order', action: 'read', title: 'View Orders' },
-  { code: 'order:export', resource: 'order', action: 'export', title: 'Export Orders' },
 
-  // Payment Management
-  { code: 'payment:read', resource: 'payment', action: 'read', title: 'View Payments' },
-
-  // Subscription Management
-  { code: 'subscription:read', resource: 'subscription', action: 'read', title: 'View Subscriptions' },
-  { code: 'subscription:cancel', resource: 'subscription', action: 'cancel', title: 'Cancel Subscriptions' },
-
-  // Credit Management
-  { code: 'credit:read', resource: 'credit', action: 'read', title: 'View Credits' },
-  { code: 'credit:grant', resource: 'credit', action: 'grant', title: 'Grant Credits' },
-
-  // API Key Management
-  { code: 'apikey:read', resource: 'apikey', action: 'read', title: 'View API Keys' },
-  { code: 'apikey:create', resource: 'apikey', action: 'create', title: 'Create API Keys' },
-  { code: 'apikey:delete', resource: 'apikey', action: 'delete', title: 'Delete API Keys' },
+  // Credit Package Management
+  { code: 'credit-package:read', resource: 'credit-package', action: 'read', title: 'View Credit Packages' },
+  { code: 'credit-package:create', resource: 'credit-package', action: 'create', title: 'Create Credit Packages' },
+  { code: 'credit-package:update', resource: 'credit-package', action: 'update', title: 'Edit Credit Packages' },
+  { code: 'credit-package:delete', resource: 'credit-package', action: 'delete', title: 'Delete Credit Packages' },
 
   // System Configuration
   { code: 'config:read', resource: 'config', action: 'read', title: 'View Config' },
   { code: 'config:update', resource: 'config', action: 'update', title: 'Update Config' },
 
-  // Role & Permission Management
+  // Role Management
   { code: 'role:read', resource: 'role', action: 'read', title: 'View Roles' },
-  { code: 'role:create', resource: 'role', action: 'create', title: 'Create Roles' },
-  { code: 'role:update', resource: 'role', action: 'update', title: 'Edit Roles' },
-  { code: 'role:delete', resource: 'role', action: 'delete', title: 'Delete Roles' },
 ];
 
 // ============================================================
@@ -80,16 +54,10 @@ const DEFAULT_ROLES = [
     isSystem: true,
     permissions: [
       'user:*',
-      'post:*',
-      'category:*',
       'order:read',
-      'order:export',
-      'payment:read',
-      'subscription:read',
-      'credit:read',
-      'credit:grant',
-      'apikey:*',
+      'credit-package:*',
       'config:read',
+      'role:read',
     ],
   },
   {

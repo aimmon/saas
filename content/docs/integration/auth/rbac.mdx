@@ -1,0 +1,159 @@
+---
+title: RBAC
+description: Role-Based Access Control system with roles, permissions, wildcards, conditional rules, and a CLI management tool
+---
+
+VibeAny includes a built-in RBAC (Role-Based Access Control) system that manages user permissions through roles. The system provides database schema, model functions, a permission checker, and a CLI tool for management.
+
+## Architecture
+
+The RBAC system consists of four database tables:
+
+| Table | Description |
+|-------|-------------|
+| `permission` | Permission definitions with `resource:action` format (e.g. `user:read`) |
+| `role` | Roles with inheritance support and system role flag |
+| `role_permission` | Maps roles to permissions, supports wildcards and conditional rules |
+| `user_role` | Assigns roles to users, with optional expiration |
+
+## Default Roles
+
+Run `pnpm rbac init` to create the default roles and permissions:
+
+| Role | Description | Permissions |
+|------|-------------|-------------|
+| `super_admin` | Full system access | `*` (all) |
+| `admin` | Backend management | `user:*`, `order:read`, `credit-package:*`, `config:read`, `role:read` |
+| `banned` | Blocked user | None |
+
+## Default Permissions
+
+Permissions follow the `resource:action` format, aligned with the actual admin features:
+
+| Resource | Actions | Description |
+|----------|---------|-------------|
+| `user` | `read`, `ban`, `grant-credit`, `manage-role` | User management |
+| `order` | `read` | Order viewing |
+| `credit-package` | `read`, `create`, `update`, `delete` | Credit package management |
+| `config` | `read`, `update` | System configuration |
+| `role` | `read` | Role viewing |
+
+## Middleware
+
+The auth middleware provides route protection at two levels:
+
+```
+sessionMiddleware          — Attaches session to context (nullable)
+├── apiAuthMiddleware      — Requires login (API routes, returns 401)
+├── pageAuthMiddleware     — Requires login (pages, redirects to /login)
+├── apiAdminMiddleware     — Requires admin role (API routes, returns 403)
+└── pageAdminMiddleware    — Requires admin role (pages, redirects to /404)
+```
+
+Admin middleware checks if the user has `super_admin` or `admin` role via `isUserAdmin()`.
+
+## Permission Checker
+
+A `PermissionChecker` class is provided at `src/integrations/rabc/checker.ts` for fine-grained permission checks:
+
+```ts
+import { PermissionChecker } from "@/integrations/rabc/checker"
+import { getUserPermissionRules } from "@/shared/model/rabc.model"
+
+const rules = await getUserPermissionRules(userId)
+const checker = new PermissionChecker(rules)
+
+checker.can("read", "user")           // true if user has user:read or user:* or *
+checker.can("delete", "post")         // true if user has post:delete or post:* or *
+checker.cannot("grant", "credit")     // inverse check
+checker.hasPermission("config:update") // check by permission code
+```
+
+Features:
+- **Wildcard matching** — `*` matches all, `resource:*` matches all actions on a resource
+- **Conditional rules** — `ownOnly` restricts to own resources, `fields` restricts to specific fields
+- **Allow-first strategy** — If any role grants the permission, it is allowed
+
+## CLI Tool
+
+Manage the RBAC system from the command line:
+
+```bash
+pnpm rbac init                        # Initialize default roles and permissions
+pnpm rbac init --force                # Force reset all roles and permissions
+
+pnpm rbac assign -e admin@example.com -r super_admin      # Assign role
+pnpm rbac assign -e user@example.com -r admin -d 30       # Assign with 30-day expiry
+
+pnpm rbac revoke -e user@example.com -r admin             # Revoke role
+
+pnpm rbac list-roles                                       # List all roles
+pnpm rbac list-permissions                                 # List all permissions
+pnpm rbac list-permissions -r user                         # Filter by resource
+pnpm rbac list-user-roles -e admin@example.com             # View user's roles
+
+pnpm rbac check -e admin@example.com -p user:delete        # Check permission
+```
+
+## Current Scope
+
+<Callout type="warn" title="What's included vs. what's not">
+The RBAC system currently provides **admin-level route protection** — all admin pages and APIs are guarded by middleware that checks for `super_admin` or `admin` roles. This covers the most common use case.
+
+The following features are **implemented in code but not integrated** into route handlers. They are designed as building blocks for you to extend:
+
+- **Fine-grained permission checks** — `PermissionChecker` is available but not wired into any middleware or route. You can use it to build per-action authorization (e.g. only allow `order:export` for certain admin roles).
+- **Role inheritance** — The `inherits` field exists in the schema but is not resolved during permission lookups. If you need role hierarchies, you'll need to implement inheritance resolution in `getUserPermissionRules()`.
+- **Inverted rules** — The `inverted` flag (CASL-style `cannot`) exists in the schema but is skipped by `PermissionChecker`. Implement this if you need deny rules.
+- **Banned role enforcement** — The `banned` role exists but is not checked in any middleware. The current ban mechanism uses the `user.banned` database field instead.
+</Callout>
+
+## Extending RBAC
+
+To add fine-grained permission checks to your routes, create a custom middleware:
+
+```ts
+import { createMiddleware } from "@tanstack/react-start"
+import { PermissionChecker } from "@/integrations/rabc/checker"
+import { getUserPermissionRules } from "@/shared/model/rabc.model"
+import { Resp } from "@/shared/lib/tools/response"
+import { apiAuthMiddleware } from "@/shared/middleware/auth.middleware"
+
+export function requirePermission(resource: string, action: string) {
+  return createMiddleware()
+    .middleware([apiAuthMiddleware])
+    .server(async ({ next, context }) => {
+      const rules = await getUserPermissionRules(context.session.user.id)
+      const checker = new PermissionChecker(rules)
+
+      if (checker.cannot(action, resource)) {
+        return Resp.error("Forbidden", 403)
+      }
+
+      return await next()
+    })
+}
+```
+
+Then use it in your route handlers:
+
+```ts
+const authMiddleware = requirePermission("user", "delete")
+
+export const Route = createAPIFileRoute("/api/admin/users/$id")({
+  DELETE: async ({ params }) => {
+    // Only users with user:delete permission can reach here
+  },
+  middleware: [authMiddleware],
+})
+```
+
+## Key Files
+
+| File | Description |
+|------|-------------|
+| `src/db/rbac.schema.ts` | Database schema (permission, role, role_permission, user_role) |
+| `src/shared/model/rabc.model.ts` | Model functions (query roles, assign, check admin) |
+| `src/integrations/rabc/checker.ts` | `PermissionChecker` class for fine-grained checks |
+| `src/shared/middleware/auth.middleware.ts` | Auth and admin middleware |
+| `scripts/rbac.ts` | CLI management tool |

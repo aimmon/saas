@@ -1,0 +1,159 @@
+---
+title: RBAC 权限控制
+description: 基于角色的访问控制系统，支持角色、权限、通配符、条件规则和 CLI 管理工具
+---
+
+VibeAny 内置了 RBAC（基于角色的访问控制）系统，通过角色管理用户权限。系统提供了数据库 schema、模型函数、权限检查器和 CLI 管理工具。
+
+## 架构
+
+RBAC 系统由四张数据库表组成：
+
+| 表名 | 说明 |
+|------|------|
+| `permission` | 权限定义，使用 `resource:action` 格式（如 `user:read`） |
+| `role` | 角色，支持继承和系统角色标记 |
+| `role_permission` | 角色与权限的映射，支持通配符和条件规则 |
+| `user_role` | 用户的角色分配，支持过期时间 |
+
+## 默认角色
+
+运行 `pnpm rbac init` 创建默认角色和权限：
+
+| 角色 | 说明 | 权限 |
+|------|------|------|
+| `super_admin` | 超级管理员 | `*`（全部） |
+| `admin` | 后台管理员 | `user:*`、`order:read`、`credit-package:*`、`config:read`、`role:read` |
+| `banned` | 封禁用户 | 无 |
+
+## 默认权限
+
+权限遵循 `resource:action` 格式，与实际后台功能对齐：
+
+| 资源 | 操作 | 说明 |
+|------|------|------|
+| `user` | `read`、`ban`、`grant-credit`、`manage-role` | 用户管理 |
+| `order` | `read` | 订单查看 |
+| `credit-package` | `read`、`create`、`update`、`delete` | 积分包管理 |
+| `config` | `read`、`update` | 系统配置 |
+| `role` | `read` | 角色查看 |
+
+## 中间件
+
+认证中间件提供两个层级的路由保护：
+
+```
+sessionMiddleware          — 将 session 附加到上下文（可为空）
+├── apiAuthMiddleware      — 要求登录（API 路由，返回 401）
+├── pageAuthMiddleware     — 要求登录（页面路由，重定向到 /login）
+├── apiAdminMiddleware     — 要求管理员角色（API 路由，返回 403）
+└── pageAdminMiddleware    — 要求管理员角色（页面路由，重定向到 /404）
+```
+
+管理员中间件通过 `isUserAdmin()` 检查用户是否拥有 `super_admin` 或 `admin` 角色。
+
+## 权限检查器
+
+`src/integrations/rabc/checker.ts` 提供了 `PermissionChecker` 类用于细粒度权限检查：
+
+```ts
+import { PermissionChecker } from "@/integrations/rabc/checker"
+import { getUserPermissionRules } from "@/shared/model/rabc.model"
+
+const rules = await getUserPermissionRules(userId)
+const checker = new PermissionChecker(rules)
+
+checker.can("read", "user")           // user:read、user:* 或 * 均匹配
+checker.can("delete", "post")         // post:delete、post:* 或 * 均匹配
+checker.cannot("grant", "credit")     // 反向检查
+checker.hasPermission("config:update") // 按权限码检查
+```
+
+特性：
+- **通配符匹配** — `*` 匹配全部，`resource:*` 匹配某资源下的所有操作
+- **条件规则** — `ownOnly` 限制只能操作自己的资源，`fields` 限制可操作的字段
+- **允许优先策略** — 只要任一角色授予了该权限，即为允许
+
+## CLI 工具
+
+通过命令行管理 RBAC 系统：
+
+```bash
+pnpm rbac init                        # 初始化默认角色和权限
+pnpm rbac init --force                # 强制重置所有角色和权限
+
+pnpm rbac assign -e admin@example.com -r super_admin      # 分配角色
+pnpm rbac assign -e user@example.com -r admin -d 30       # 分配角色，30 天后过期
+
+pnpm rbac revoke -e user@example.com -r admin             # 撤销角色
+
+pnpm rbac list-roles                                       # 列出所有角色
+pnpm rbac list-permissions                                 # 列出所有权限
+pnpm rbac list-permissions -r user                         # 按资源过滤
+pnpm rbac list-user-roles -e admin@example.com             # 查看用户角色
+
+pnpm rbac check -e admin@example.com -p user:delete        # 检查权限
+```
+
+## 当前范围
+
+<Callout type="warn" title="已集成 vs 未集成">
+RBAC 系统目前提供的是**管理员级别的路由保护** — 所有管理后台页面和 API 都通过中间件检查 `super_admin` 或 `admin` 角色。这覆盖了最常见的使用场景。
+
+以下功能**代码已实现但未集成**到路由处理中，作为扩展的构建模块供你使用：
+
+- **细粒度权限检查** — `PermissionChecker` 已实现但未接入任何中间件或路由。你可以用它来构建按操作授权的逻辑（例如只允许特定管理员角色执行 `order:export`）。
+- **角色继承** — Schema 中存在 `inherits` 字段，但在权限查询时未解析继承链。如果需要角色层级结构，你需要在 `getUserPermissionRules()` 中实现继承解析。
+- **反转规则** — Schema 中存在 `inverted` 标记（CASL 风格的 `cannot`），但 `PermissionChecker` 目前跳过了反转规则。如果需要拒绝规则，需要自行实现。
+- **封禁角色强制执行** — `banned` 角色已存在但未在任何中间件中检查。当前的封禁机制使用的是 `user.banned` 数据库字段。
+</Callout>
+
+## 扩展 RBAC
+
+要为路由添加细粒度权限检查，可以创建自定义中间件：
+
+```ts
+import { createMiddleware } from "@tanstack/react-start"
+import { PermissionChecker } from "@/integrations/rabc/checker"
+import { getUserPermissionRules } from "@/shared/model/rabc.model"
+import { Resp } from "@/shared/lib/tools/response"
+import { apiAuthMiddleware } from "@/shared/middleware/auth.middleware"
+
+export function requirePermission(resource: string, action: string) {
+  return createMiddleware()
+    .middleware([apiAuthMiddleware])
+    .server(async ({ next, context }) => {
+      const rules = await getUserPermissionRules(context.session.user.id)
+      const checker = new PermissionChecker(rules)
+
+      if (checker.cannot(action, resource)) {
+        return Resp.error("Forbidden", 403)
+      }
+
+      return await next()
+    })
+}
+```
+
+然后在路由中使用：
+
+```ts
+const authMiddleware = requirePermission("user", "delete")
+
+export const Route = createAPIFileRoute("/api/admin/users/$id")({
+  DELETE: async ({ params }) => {
+    // 只有拥有 user:delete 权限的用户才能到达这里
+  },
+  middleware: [authMiddleware],
+})
+```
+
+## 相关文件
+
+| 文件 | 说明 |
+|------|------|
+| `src/db/rbac.schema.ts` | 数据库 schema（permission、role、role_permission、user_role） |
+| `src/shared/model/rabc.model.ts` | 模型函数（查询角色、分配、管理员检查） |
+| `src/integrations/rabc/checker.ts` | `PermissionChecker` 细粒度权限检查类 |
+| `src/shared/middleware/auth.middleware.ts` | 认证和管理员中间件 |
+| `scripts/rbac.ts` | CLI 管理工具 |
