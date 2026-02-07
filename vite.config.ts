@@ -31,7 +31,12 @@ const config = defineConfig({
     ],
   },
   plugins: [
-    intlayerProxy(), // must be placed before nitro
+    intlayerProxy(
+      {},
+      {
+        ignore: (req) => req.url?.startsWith("/api/") ?? false,
+      }
+    ),
     devtools(),
     nitro(),
     tanstackServerHMR(),

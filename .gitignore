@@ -15,6 +15,11 @@ todos.json
 # fumadocs
 /.source
 
+# remotion
+promo-video
+
+.agents
+
 # content-collections
 .content-collections
 
