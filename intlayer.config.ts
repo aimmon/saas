@@ -7,7 +7,7 @@ const config: IntlayerConfig = {
   },
   routing: {
     mode: "prefix-no-default",
-    storage: "localStorage",
+    storage: ["cookie", "localStorage"],
   },
   content: {
     watch: true,

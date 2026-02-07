@@ -9,6 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu"
+import { setLocaleCookie } from "@/shared/lib/locale/locale-cookie"
 import { cn } from "@/shared/lib/utils"
 import { LocalizedLink, type To } from "./localized-link"
 
@@ -16,6 +17,11 @@ export const LocaleSwitcher = () => {
   const { pathname } = useLocation()
   const { availableLocales, locale, setLocale } = useLocale()
   const pathWithoutLocale = getPathWithoutLocale(pathname)
+
+  const handleLocaleChange = (newLocale: string) => {
+    setLocale(newLocale)
+    setLocaleCookie(newLocale)
+  }
 
   return (
     <DropdownMenu>
@@ -41,7 +47,7 @@ export const LocaleSwitcher = () => {
             className="cursor-pointer"
           >
             <LocalizedLink
-              onClick={() => setLocale(localeEl)}
+              onClick={() => handleLocaleChange(localeEl)}
               params={{ locale: getPrefix(localeEl).localePrefix }}
               to={pathWithoutLocale as To}
               className={cn("w-full", locale === localeEl && "bg-muted")}

@@ -40,6 +40,7 @@ import {
 } from "@/shared/components/ui/sidebar"
 import { useGlobalContext } from "@/shared/context/global.context"
 import { signOut } from "@/shared/lib/auth/auth-client"
+import { setLocaleCookie } from "@/shared/lib/locale/locale-cookie"
 import { cn } from "@/shared/lib/utils"
 
 function getInitials(name: string | undefined | null) {
@@ -202,7 +203,10 @@ export default function AdminSidebar() {
                       className="cursor-pointer"
                     >
                       <LocalizedLink
-                        onClick={() => setLocale(localeEl)}
+                        onClick={() => {
+                          setLocale(localeEl)
+                          setLocaleCookie(localeEl)
+                        }}
                         params={{ locale: getPrefix(localeEl).localePrefix }}
                         to={pathWithoutLocale as To}
                       >
