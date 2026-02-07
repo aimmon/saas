@@ -4,12 +4,13 @@ import React from "react"
 import { Resend } from "resend"
 import { MagicLinkEmail } from "@/shared/components/email/magic-link-email"
 import { VerificationEmail } from "@/shared/components/email/verification-email"
+import { WaitlistEmail } from "@/shared/components/email/waitlist-email"
 
-export type EmailType = "magic-link" | "verification"
+export type EmailType = "magic-link" | "verification" | "waitlist"
 
 export interface EmailData {
   to: string
-  url: string
+  url?: string
   locale?: string
   subject: string
   type?: EmailType
@@ -72,6 +73,14 @@ function renderEmailTemplate(data: EmailData): Promise<string> {
     return render(
       React.createElement(VerificationEmail, {
         verificationLink: data.url,
+        locale: data.locale || "en",
+      })
+    )
+  }
+
+  if (type === "waitlist") {
+    return render(
+      React.createElement(WaitlistEmail, {
         locale: data.locale || "en",
       })
     )

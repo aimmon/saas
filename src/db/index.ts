@@ -8,6 +8,7 @@ export * from "./order.schema"
 export * from "./payment.schema"
 export * from "./rbac.schema"
 export * from "./subscription.schema"
+export * from "./waitlist.schema"
 
 import * as authSchema from "./auth.schema"
 import * as configSchema from "./config.schema"
@@ -16,6 +17,7 @@ import * as orderSchema from "./order.schema"
 import * as paymentSchema from "./payment.schema"
 import * as rbacSchema from "./rbac.schema"
 import * as subscriptionSchema from "./subscription.schema"
+import * as waitlistSchema from "./waitlist.schema"
 
 const schema = {
   ...authSchema,
@@ -25,6 +27,7 @@ const schema = {
   ...subscriptionSchema,
   ...paymentSchema,
   ...rbacSchema,
+  ...waitlistSchema,
 }
 
 export type DbSchema = typeof schema

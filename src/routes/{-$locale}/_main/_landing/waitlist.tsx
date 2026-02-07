@@ -2,8 +2,9 @@ import { createFileRoute } from "@tanstack/react-router"
 import { ArrowRightIcon, CheckIcon, ClockIcon, Loader2Icon, SparklesIcon } from "lucide-react"
 import { motion } from "motion/react"
 import { type FormEvent, useEffect, useState } from "react"
-import { useIntlayer } from "react-intlayer"
+import { useIntlayer, useLocale } from "react-intlayer"
 import { z } from "zod"
+import { joinWaitlistFn } from "@/actions/waitlist.action"
 import { GlowingEffect } from "@/shared/components/motion-primitives/glowing-effect"
 import { TextEffect } from "@/shared/components/motion-primitives/text-effect"
 import { Badge } from "@/shared/components/ui/badge"
@@ -61,6 +62,7 @@ function CountdownUnit({ value, label }: { value: number; label: string }) {
 
 function WaitlistPage() {
   const content = useIntlayer("waitlist")
+  const { locale } = useLocale()
   const [email, setEmail] = useState("")
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
   const [errorMessage, setErrorMessage] = useState("")
@@ -78,10 +80,13 @@ function WaitlistPage() {
 
     setStatus("loading")
 
-    // TODO: 实现提交逻辑
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-
-    setStatus("success")
+    try {
+      await joinWaitlistFn({ data: { email: parsed.data, locale } })
+      setStatus("success")
+    } catch {
+      setStatus("error")
+      setErrorMessage(content.invalidEmail.value)
+    }
   }
 
   return (
