@@ -19,6 +19,9 @@
   <a href="https://youtu.be/0DqfKBenvkQ">
     <img src="https://img.shields.io/badge/▶_观看演示-black?style=for-the-badge" alt="Watch Demo" />
   </a>
+  <a href="https://vibeany.dev/docs">
+    <img src="https://img.shields.io/badge/📖_文档-blue?style=for-the-badge" alt="Documentation" />
+  </a>
 </p>
 <p align="center">
   <a href="https://youtu.be/0DqfKBenvkQ">
