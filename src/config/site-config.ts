@@ -12,9 +12,9 @@ export const siteConfig = {
     isInvert: true,
   },
   social: {
-    github: "https://github.com/jiahao-jayden/vibe-any",
-    // twitter: "https://x.com/VibeAny",
-    // discord: "https://discord.gg/yVwpEtTT",
-    // youtube: "https://www.youtube.com/@VibeAny",
+    github: "https://github.com/jiahao-jayden/vibe-any-tanstack",
+    twitter: "https://x.com/jiahao_jayden",
+    discord: "https://discord.gg/FQ2TAHh6",
+    youtube: "https://www.youtube.com/@huanhao1323",
   },
 }
