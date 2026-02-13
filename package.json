@@ -30,7 +30,7 @@
   ],
   "scripts": {
     "dev": "rm -rf node_modules/.vite && vite dev --port 3377",
-    "build": "vite build",
+    "build": "NODE_OPTIONS='--max-old-space-size=8192' vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "format": "biome format",
