@@ -5,7 +5,6 @@
       "icon": "Calendar",
       "color": "#60A5FA",
       "items": [
-        { "title": "Subscription Management", "description": "Self-service subscription management, upgrades, downgrades, and cancellations" },
         { "title": "Email Template Editor", "description": "Visual email template editor with custom styling support" },
         { "title": "API Key Management", "description": "Create and manage API keys for users" },
         { "title": "Agent Template Modifier", "description": "Quickly modify template code locally via AI Agent" }
@@ -16,8 +15,7 @@
       "icon": "Loader",
       "color": "#F59E0B",
       "items": [
-        { "title": "More Payment Adapters", "description": "Integration with PayPal, WeChat Pay, Alipay and more" },
-        { "title": "AI Service Integration", "description": "Integration with OpenAI, DeepSeek, Replicate and more AI services, support text, image, video, audio generation" }
+        { "title": "More Payment Adapters", "description": "Integration with PayPal, WeChat Pay, Alipay and more" }
       ]
     },
     {
@@ -25,10 +23,14 @@
       "icon": "Rocket",
       "color": "#34D399",
       "items": [
+        { "title": "AI Chat System", "description": "Built-in AI chat with model selector, conversation management, and multi-provider support" },
+        { "title": "AI Service Integration", "description": "100+ models across OpenAI, Anthropic, Google, DeepSeek, Groq, Mistral and more providers" },
+        { "title": "Subscription Management", "description": "Self-service subscription management with customer portal, cancellation and lifecycle tracking" },
+        { "title": "SEO Optimization", "description": "Dynamic sitemap generation and configurable robots.txt" },
         { "title": "TanStack Start Framework", "description": "Built with React 19 + TanStack Router/Query" },
         { "title": "Better Auth System", "description": "Email login, social login, magic link and more authentication methods" },
         { "title": "Internationalization", "description": "Complete i18n solution based on intlayer with multi-language support" },
-        { "title": "Stripe Payment & Subscription", "description": "One-time payments and subscriptions with automatic webhook handling" },
+        { "title": "Stripe & Creem Payments", "description": "One-time payments and subscriptions with automatic webhook handling via Stripe and Creem" },
         { "title": "Credit System", "description": "Sign-up bonus, daily rewards, credit purchase and consumption, credit history" },
         { "title": "Resend Email Service", "description": "React Email templates + Resend delivery service" },
         { "title": "Admin Dashboard", "description": "User management, config management, credit packages, product management" },
