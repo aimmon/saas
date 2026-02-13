@@ -36,10 +36,9 @@ function AIConfigPage() {
     })
   }
 
-  const { data: configs, isLoading } = useQuery({
+  const { data: configs = [], isPending } = useQuery({
     queryKey: ["admin", "configs"],
     queryFn: () => http<ConfigMeta[]>("/api/admin/config"),
-    initialData: [],
     refetchOnWindowFocus: false,
   })
 
@@ -80,7 +79,7 @@ function AIConfigPage() {
   }
 
   const getGroupConfigs = (prefixes: string[]) => {
-    return configs?.filter((c) => prefixes.some((prefix) => c.key.startsWith(prefix))) ?? []
+    return configs.filter((c) => prefixes.some((prefix) => c.key.startsWith(prefix)))
   }
 
   const getGroupPendingChanges = (prefixes: string[]) => {
@@ -109,7 +108,7 @@ function AIConfigPage() {
     })
   }
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <>
         <PageHeader

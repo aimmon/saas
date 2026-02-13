@@ -8,11 +8,7 @@ import { configGroups } from "@/config/dynamic-config"
 import { PageHeader } from "@/shared/components/admin"
 import { ConfigGroupCard } from "@/shared/components/admin/config-field"
 import { Button } from "@/shared/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from "@/shared/components/ui/card"
+import { Card, CardContent, CardHeader } from "@/shared/components/ui/card"
 import { Skeleton } from "@/shared/components/ui/skeleton"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/components/ui/tooltip"
 import type { ConfigMeta } from "@/shared/lib/config/helper"
@@ -40,10 +36,9 @@ function ConfigPage() {
     })
   }
 
-  const { data: configs, isLoading } = useQuery({
+  const { data: configs = [], isPending } = useQuery({
     queryKey: ["admin", "configs"],
     queryFn: () => http<ConfigMeta[]>("/api/admin/config"),
-    initialData: [],
     refetchOnWindowFocus: false,
   })
 
@@ -85,7 +80,7 @@ function ConfigPage() {
   }
 
   const getGroupConfigs = (prefixes: string[]) => {
-    return configs?.filter((c) => prefixes.some((prefix) => c.key.startsWith(prefix))) ?? []
+    return configs.filter((c) => prefixes.some((prefix) => c.key.startsWith(prefix)))
   }
 
   const getGroupPendingChanges = (prefixes: string[]) => {
@@ -114,7 +109,7 @@ function ConfigPage() {
     })
   }
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <>
         <PageHeader
