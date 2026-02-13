@@ -39,7 +39,7 @@
 - **Internationalization** — English and Chinese out of the box (Intlayer)
 - **Email** — Verification and magic link emails via Resend or custom SMTP
 - **File Storage** — S3-compatible upload (Cloudflare R2, AWS S3, MinIO)
-- **AI Chat** — Chat interface with Vercel AI SDK
+- **AI Chat** — Chat interface with Vercel AI SDK, supports 100+ models
 - **UI** — Tailwind CSS v4, shadcn/ui, Radix primitives, Lucide icons
 - **Theme** — Light / dark / system with one-click toggle
 
@@ -159,7 +159,7 @@ src/
 ├── actions/          # Server actions
 ├── config/           # Site config, i18n content, dynamic config
 ├── db/               # Drizzle schema (auth, config, RBAC)
-├── integrations/     # RBAC checker, storage, TanStack Query
+├── integrations/     # RBAC checker, storage, TanStack Query, AI
 ├── routes/
 │   ├── api/          # API routes (auth, admin, file upload)
 │   └── {-$locale}/   # Page routes with i18n prefix

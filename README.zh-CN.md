@@ -39,7 +39,7 @@
 - **国际化** — 开箱即用的中英文支持（Intlayer）
 - **邮件** — 通过 Resend 或自定义 SMTP 发送验证和 Magic Link 邮件
 - **文件存储** — S3 兼容上传（Cloudflare R2、AWS S3、MinIO）
-- **AI 聊天** — 基于 Vercel AI SDK 的聊天界面
+- **AI 聊天** — 基于 Vercel AI SDK 的聊天界面，支持 100+ 模型
 - **UI** — Tailwind CSS v4、shadcn/ui、Radix 原语、Lucide 图标
 - **主题** — 亮色 / 暗色 / 跟随系统，一键切换
 
@@ -159,7 +159,7 @@ src/
 ├── actions/          # Server Actions
 ├── config/           # 站点配置、国际化内容、动态配置
 ├── db/               # Drizzle Schema（认证、配置、RBAC）
-├── integrations/     # RBAC 检查器、存储、TanStack Query
+├── integrations/     # RBAC 检查器、存储、TanStack Query、AI
 ├── routes/
 │   ├── api/          # API 路由（认证、管理、文件上传）
 │   └── {-$locale}/   # 带国际化前缀的页面路由
