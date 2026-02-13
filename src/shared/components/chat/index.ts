@@ -1,2 +1,4 @@
-export type { ChatDialogProps, ChatMessage } from "./chat-dialog"
-export { ChatDialog } from "./chat-dialog"
+export type { ChatMessage, ChatPanelProps } from "./chat-panel"
+export { ChatPanel } from "./chat-panel"
+export type { ModelPickerProps } from "./model-picker"
+export { ModelPicker } from "./model-picker"

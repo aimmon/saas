@@ -111,6 +111,32 @@ export default {
       items: [
         {
           type: "image" as const,
+          title: t({ en: "AI Model System", zh: "AI 模型系统" }),
+          description: t({
+            en: "Integrate multiple AI providers (10+), support 100+ models, support model selection, conversation management, and multi-provider support",
+            zh: "集成多家 AI 服务商（10+）,支持 100+ 模型, 支持模型选择、会话管理和多服务商支持",
+          }),
+          image: "/landing/introduction/ai-chat.webp" as const,
+          imagePosition: "left" as const,
+          features: [
+            {
+              title: t({ en: "Multi-Provider Support", zh: "多服务商支持" }),
+              description: t({
+                en: "Support multiple model selection, conversation management, and multi-provider support",
+                zh: "支持多模型选择（OpenAI、Anthropic、Google、DeepSeek、Groq、Mistral 等）、会话管理和多服务商支持",
+              }),
+            },
+            {
+              title: t({ en: "Model Selection", zh: "模型选择" }),
+              description: t({
+                en: "Backend dynamic configuration system, unified management of API Keys for multiple providers",
+                zh: "后台动态配置系统，统一管理 API Key 配置",
+              }),
+            },
+          ],
+        },
+        {
+          type: "image" as const,
           title: t({ en: "Zero-Config Authentication", zh: "零配置认证系统" }),
           description: t({
             en: "Built on Better Auth with one-click social login, magic links, and role-based access control. Just configure your OAuth credentials in the admin panel — no code changes needed.",
