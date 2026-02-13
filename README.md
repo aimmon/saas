@@ -42,6 +42,61 @@
 - **UI** — Tailwind CSS v4, shadcn/ui, Radix primitives, Lucide icons
 - **Theme** — Light / dark / system with one-click toggle
 
+## Architecture
+
+```mermaid
+graph TB
+    Client([Browser])
+
+    subgraph Frontend
+        Router[TanStack Router]
+        Query[TanStack Query]
+        UI[React 19 + shadcn/ui]
+        I18n[Intlayer i18n]
+    end
+
+    subgraph Backend["TanStack Start (Vite + Nitro)"]
+        API[Server Functions / API Routes]
+        Auth[Better Auth]
+        Services[Business Logic]
+        RBAC[RBAC Middleware]
+    end
+
+    subgraph Data
+        DB[(PostgreSQL)]
+        ORM[Drizzle ORM]
+        S3[S3 Storage]
+    end
+
+    subgraph Content
+        MDX[MDX Blog]
+        Docs[Fumadocs]
+    end
+
+    subgraph External
+        AI[AI Providers]
+        Email[Resend / SMTP]
+        OAuth[GitHub / Google OAuth]
+    end
+
+    Client --> Router
+    Router --> Query
+    Query --> API
+    UI --> Router
+    I18n --> UI
+    API --> Auth
+    API --> Services
+    Auth --> RBAC
+    Auth --> OAuth
+    Services --> ORM
+    ORM --> DB
+    Services --> S3
+    Services --> AI
+    Services --> Email
+    Router --> MDX
+    Router --> Docs
+```
+
 ## Tech Stack
 
 | Layer | Technology |

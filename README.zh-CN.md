@@ -42,6 +42,61 @@
 - **UI** — Tailwind CSS v4、shadcn/ui、Radix 原语、Lucide 图标
 - **主题** — 亮色 / 暗色 / 跟随系统，一键切换
 
+## 架构
+
+```mermaid
+graph TB
+    Client([浏览器])
+
+    subgraph Frontend[前端]
+        Router[TanStack Router]
+        Query[TanStack Query]
+        UI[React 19 + shadcn/ui]
+        I18n[Intlayer i18n]
+    end
+
+    subgraph Backend["TanStack Start (Vite + Nitro)"]
+        API[Server Functions / API Routes]
+        Auth[Better Auth]
+        Services[业务逻辑]
+        RBAC[RBAC 中间件]
+    end
+
+    subgraph Data[数据层]
+        DB[(PostgreSQL)]
+        ORM[Drizzle ORM]
+        S3[S3 存储]
+    end
+
+    subgraph Content[内容]
+        MDX[MDX 博客]
+        Docs[Fumadocs]
+    end
+
+    subgraph External[外部服务]
+        AI[AI Providers]
+        Email[Resend / SMTP]
+        OAuth[GitHub / Google OAuth]
+    end
+
+    Client --> Router
+    Router --> Query
+    Query --> API
+    UI --> Router
+    I18n --> UI
+    API --> Auth
+    API --> Services
+    Auth --> RBAC
+    Auth --> OAuth
+    Services --> ORM
+    ORM --> DB
+    Services --> S3
+    Services --> AI
+    Services --> Email
+    Router --> MDX
+    Router --> Docs
+```
+
 ## 技术栈
 
 | 层级 | 技术 |
